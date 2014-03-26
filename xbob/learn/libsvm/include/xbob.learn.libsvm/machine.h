@@ -8,14 +8,14 @@
  * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
  */
 
-#ifndef BOB_MACHINE_SVM_H
-#define BOB_MACHINE_SVM_H
+#ifndef BOB_LEARN_LIBSVM_MACHINE_H
+#define BOB_LEARN_LIBSVM_MACHINE_H
 
-#include <svm.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include <blitz/array.h>
 #include <fstream>
+#include <svm.h>
 #include <bob/io/HDF5File.h>
 
 // We need to declare the svm_model type for libsvm < 3.0.0. The next bit of
@@ -42,86 +42,7 @@ struct svm_model {
 };
 #endif
 
-namespace bob { namespace machine {
-  /**
-   * @ingroup MACHINE
-   * @{
-   */
-
-  /**
-   * Loads a given libsvm data file. The data file format, as defined on the
-   * library README is like this:
-   *
-   * [label] [index1]:[value1] [index2]:[value2] ...
-   *
-   * The labels are integer values, so are the indexes, starting from "1" (and
-   * not from zero as a C-programmer would expect. The values are floating
-   * point.
-   *
-   * Zero values are suppressed - this is a sparse format.
-   */
-  class SVMFile {
-
-    public: //api
-
-      /**
-       * Constructor, initializes the file readout.
-       */
-      SVMFile (const std::string& filename);
-
-      /**
-       * Destructor virtualization
-       */
-      virtual ~SVMFile();
-
-      /**
-       * Returns the size of each entry in the file, in number of floats
-       */
-      inline size_t shape() const { return m_shape; }
-
-      /**
-       * Returns the number of samples in the file.
-       */
-      inline size_t samples() const { return m_n_samples; }
-
-      /**
-       * Resets the file, going back to the beginning.
-       */
-      void reset();
-
-      /**
-       * Reads the next entry. Values are organized according to the indexed
-       * labels at the file. Returns 'false' if the file is over or something
-       * goes wrong.
-       */
-      bool read(int& label, blitz::Array<double,1>& values);
-
-      /**
-       * Reads the next entry on the file, but without checking. Returns
-       * 'false' if the file is over or something goes wrong reading the file.
-       */
-      bool read_(int& label, blitz::Array<double,1>& values);
-
-      /**
-       * Returns the name of the file being read.
-       */
-      inline const std::string& filename() const { return m_filename; }
-
-      /**
-       * Tests if the file is still good to go.
-       */
-      inline bool good() const { return m_file.good(); }
-      inline bool eof() const { return m_file.eof(); }
-      inline bool fail() const { return m_file.fail(); }
-
-    private: //representation
-
-      std::string m_filename; ///< The path to the file being read
-      std::ifstream m_file; ///< The file I'm reading.
-      size_t m_shape; ///< Number of floats in samples
-      size_t m_n_samples; ///< total number of samples at input file
-
-  };
+namespace bob { namespace learn { namespace libsvm {
 
   /**
    * Here is the problem: libsvm does not provide a simple way to extract the
@@ -141,7 +62,7 @@ namespace bob { namespace machine {
   /**
    * Interface to svm_model, from libsvm. Incorporates prediction.
    */
-  class SupportVector {
+  class Machine {
 
     public: //api
 
@@ -169,7 +90,7 @@ namespace bob { namespace machine {
        * 1.0). If you need scaling to be applied, set it individually using the
        * appropriate methods bellow.
        */
-      SupportVector(const std::string& model_file);
+      Machine(const std::string& model_file);
 
       /**
        * Builds a new Support Vector Machine from an HDF5 file containing the
@@ -177,23 +98,23 @@ namespace bob { namespace machine {
        * from the file. Using this constructor assures a 100% state recovery
        * from previous sessions.
        */
-      SupportVector(bob::io::HDF5File& config);
+      Machine(bob::io::HDF5File& config);
 
       /**
        * Builds a new SVM model from a trained model. Scaling parameters will
        * be neutral (subtraction := 0.0, division := 1.0).
        *
        * @note: This method is typically only used by the respective
-       * bob::trainer::SupportVectorTrainer as it requires the creation of the
+       * bob::trainer::MachineTrainer as it requires the creation of the
        * object "svm_model". You can still make use of it if you decide to
        * implement the model instantiation yourself.
        */
-      SupportVector(boost::shared_ptr<svm_model> model);
+      Machine(boost::shared_ptr<svm_model> model);
 
       /**
        * Virtual d'tor
        */
-      virtual ~SupportVector();
+      virtual ~Machine();
 
       /**
        * Tells the input size this machine expects
@@ -354,9 +275,9 @@ namespace bob { namespace machine {
 
     private: //not implemented
 
-      SupportVector(const SupportVector& other);
+      Machine(const Machine& other);
 
-      SupportVector& operator= (const SupportVector& other);
+      Machine& operator= (const Machine& other);
 
     private: //methods
 
@@ -375,9 +296,6 @@ namespace bob { namespace machine {
 
   };
 
-  /**
-   * @}
-   */
-}}
+}}}
 
-#endif /* BOB_MACHINE_SVM_H */
+#endif /* BOB_LEARN_LIBSVM_MACHINE_H */

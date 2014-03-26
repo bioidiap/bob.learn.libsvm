@@ -196,6 +196,8 @@ setup(
       Extension("xbob.learn.libsvm._library",
         [
           "xbob/learn/libsvm/file.cpp",
+          "xbob/learn/libsvm/machine.cpp",
+          "xbob/learn/libsvm/trainer.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,
@@ -204,6 +206,7 @@ setup(
         define_macros = define_macros,
         library_dirs = library_dirs,
         libraries = libraries,
+        boost_modules = ['filesystem'],
         ),
       ],
 

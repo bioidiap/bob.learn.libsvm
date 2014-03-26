@@ -1,24 +1,19 @@
 /**
- * @file bob/trainer/SVMTrainer.h
- * @date Sat Dec 17 14:41:56 2011 +0100
  * @author Andre Anjos <andre.anjos@idiap.ch>
+ * @date Sat Dec 17 14:41:56 2011 +0100
  *
- * @brief C++ bindings to libsvm (training bits)
+ * @brief C++ bindings to libsvm (training bit)
  *
- * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
+ * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
-#ifndef BOB_TRAINER_SVMTRAINER_H
-#define BOB_TRAINER_SVMTRAINER_H
+#ifndef BOB_LEARN_LIBSVM_TRAINER_H
+#define BOB_LEARN_LIBSVM_TRAINER_H
 
 #include <vector>
-#include "kernel_machine_cxx.h"
+#include "machine.h"
 
-namespace bob { namespace trainer {
-  /**
-   * @ingroup TRAINER
-   * @{
-   */
+namespace bob { namespace learn { namespace libsvm {
 
   /**
    * This class emulates the behavior of the command line utility called
@@ -30,7 +25,7 @@ namespace bob { namespace trainer {
    *
    * Fell free to implement those and remove these remarks.
    */
-  class SVMTrainer {
+  class Trainer {
 
     public: //api
 
@@ -38,9 +33,9 @@ namespace bob { namespace trainer {
        * Builds a new trainer setting the default parameters as defined in the
        * command line application svm-train.
        */
-      SVMTrainer(
-          bob::machine::SupportVector::svm_t svm_type=bob::machine::SupportVector::C_SVC,
-          bob::machine::SupportVector::kernel_t kernel_type=bob::machine::SupportVector::RBF,
+      Trainer(
+          bob::learn::libsvm::Machine::svm_t svm_type=bob::learn::libsvm::Machine::C_SVC,
+          bob::learn::libsvm::Machine::kernel_t kernel_type=bob::learn::libsvm::Machine::RBF,
           int degree=3, //for poly
           double gamma=0., //for poly/rbf/sigmoid
           double coef0=0., //for poly/sigmoid
@@ -57,7 +52,7 @@ namespace bob { namespace trainer {
       /**
        * Destructor virtualisation
        */
-      virtual ~SVMTrainer();
+      virtual ~Trainer();
 
       /**
        * Trains a new machine for multi-class classification. If the number of
@@ -66,14 +61,14 @@ namespace bob { namespace trainer {
        * from 1 (i.e., 1, 2, 3, 4, etc.). If what you want is regression, the
        * size of the input data array should be 1.
        */
-      boost::shared_ptr<bob::machine::SupportVector> train
+      boost::shared_ptr<bob::learn::libsvm::Machine> train
         (const std::vector<blitz::Array<double,2> >& data) const;
 
       /**
        * This version accepts scaling parameters that will be applied
        * column-wise to the input data.
        */
-      boost::shared_ptr<bob::machine::SupportVector> train
+      boost::shared_ptr<bob::learn::libsvm::Machine> train
         (const std::vector<blitz::Array<double,2> >& data,
          const blitz::Array<double,1>& input_subtract,
          const blitz::Array<double,1>& input_division) const;
@@ -81,11 +76,11 @@ namespace bob { namespace trainer {
       /**
        * Getters and setters for all parameters
        */
-      bob::machine::SupportVector::svm_t getSvmType() const { return (bob::machine::SupportVector::svm_t)m_param.svm_type; }
-      void setSvmType(bob::machine::SupportVector::svm_t v) { m_param.svm_type = v; }
+      bob::learn::libsvm::Machine::svm_t getSvmType() const { return (bob::learn::libsvm::Machine::svm_t)m_param.svm_type; }
+      void setSvmType(bob::learn::libsvm::Machine::svm_t v) { m_param.svm_type = v; }
 
-      bob::machine::SupportVector::kernel_t getKernelType() const { return (bob::machine::SupportVector::kernel_t)m_param.kernel_type; }
-      void setKernelType(bob::machine::SupportVector::kernel_t v) { m_param.kernel_type = v; }
+      bob::learn::libsvm::Machine::kernel_t getKernelType() const { return (bob::learn::libsvm::Machine::kernel_t)m_param.kernel_type; }
+      void setKernelType(bob::learn::libsvm::Machine::kernel_t v) { m_param.kernel_type = v; }
 
       int getDegree() const { return m_param.degree; }
       void setDegree(int v) { m_param.degree = v; }
@@ -125,9 +120,6 @@ namespace bob { namespace trainer {
 
   };
 
-  /**
-   * @}
-   */
-}}
+}}}
 
-#endif /* BOB_TRAINER_SVMTRAINER_H */
+#endif /* BOB_LEARN_LIBSVM_TRAINER_H */

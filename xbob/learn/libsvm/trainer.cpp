@@ -1,17 +1,15 @@
 /**
- * @file trainer/cxx/SVMTrainer.cc
- * @date Sun  4 Mar 10:02:45 2012 CET
  * @author Andre Anjos <andre.anjos@idiap.ch>
+ * @date Sun  4 Mar 10:02:45 2012 CET
  *
  * @brief Implementation of the SVM training methods
  *
- * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
+ * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
+#include <xbob.learn.libsvm/trainer.h>
 #include <boost/format.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/algorithm/string.hpp>
-#include <bob/trainer/SVMTrainer.h>
 #include <bob/core/logging.h>
 
 #ifdef BOB_DEBUG
@@ -24,12 +22,12 @@ static std::string strip(const char* s) {
 #endif
 
 static void debug_libsvm(const char* s) {
-  TDEBUG1("[libsvm-" << libsvm_version << "] " << strip(s));
+  TDEBUG1("[libsvm-" << LIBSVM_VERSION << "] " << strip(s));
 }
 
-bob::trainer::SVMTrainer::SVMTrainer(
-    bob::machine::SupportVector::svm_t svm_type,
-    bob::machine::SupportVector::kernel_t kernel_type,
+bob::learn::libsvm::Trainer::Trainer(
+    bob::learn::libsvm::Machine::svm_t svm_type,
+    bob::learn::libsvm::Machine::kernel_t kernel_type,
     int degree,
     double gamma,
     double coef0,
@@ -61,7 +59,7 @@ bob::trainer::SVMTrainer::SVMTrainer(
   m_param.weight = 0;
 }
 
-bob::trainer::SVMTrainer::~SVMTrainer() { }
+bob::learn::libsvm::Trainer::~Trainer() { }
 
 /**
  * Erases an SVM problem:
@@ -210,7 +208,7 @@ static void svm_model_free(svm_model*& m) {
 #endif
 }
 
-boost::shared_ptr<bob::machine::SupportVector> bob::trainer::SVMTrainer::train
+boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double, 2> >& data,
  const blitz::Array<double,1>& input_subtraction,
  const blitz::Array<double,1>& input_division) const {
@@ -259,10 +257,10 @@ boost::shared_ptr<bob::machine::SupportVector> bob::trainer::SVMTrainer::train
   //save newly created machine to file, reload from there to get rid of memory
   //dependencies due to the poorly implemented memory model in libsvm
   boost::shared_ptr<svm_model> new_model =
-    bob::machine::svm_unpickle(bob::machine::svm_pickle(model));
+    bob::learn::libsvm::svm_unpickle(bob::learn::libsvm::svm_pickle(model));
 
-  boost::shared_ptr<bob::machine::SupportVector> retval =
-    boost::make_shared<bob::machine::SupportVector>(new_model);
+  boost::shared_ptr<bob::learn::libsvm::Machine> retval =
+    boost::make_shared<bob::learn::libsvm::Machine>(new_model);
 
   //sets up the scaling parameters given as input
   retval->setInputSubtraction(input_subtraction);
@@ -271,7 +269,7 @@ boost::shared_ptr<bob::machine::SupportVector> bob::trainer::SVMTrainer::train
   return retval;
 }
 
-boost::shared_ptr<bob::machine::SupportVector> bob::trainer::SVMTrainer::train
+boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double,2> >& data) const {
   int n_features = data[0].extent(blitz::secondDim);
   blitz::Array<double,1> sub(n_features);
