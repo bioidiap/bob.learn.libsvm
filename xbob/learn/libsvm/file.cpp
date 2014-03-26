@@ -9,10 +9,11 @@
 
 #include <xbob.learn.libsvm/file.h>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 static bool is_colon(char i) { return i == ':'; }
 
-bob::learn::libsvm::File (const std::string& filename):
+bob::learn::libsvm::File::File (const std::string& filename):
   m_filename(filename),
   m_file(m_filename.c_str()),
   m_shape(0),

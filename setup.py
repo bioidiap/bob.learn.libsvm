@@ -5,8 +5,8 @@
 
 from setuptools import setup, find_packages, dist
 dist.Distribution(dict(setup_requires=['xbob.extension', 'xbob.blitz', 'xbob.io']))
-import xbob.extension
-import xbob.blitz
+from xbob.extension.utils import egrep, find_header, find_library
+from xbob.blitz.extension import Extension
 import xbob.io
 
 import os
@@ -14,7 +14,6 @@ package_dir = os.path.dirname(os.path.realpath(__file__))
 package_dir = os.path.join(package_dir, 'xbob', 'learn', 'libsvm', 'include')
 include_dirs = [
     package_dir,
-    xbob.blitz.get_include(),
     xbob.io.get_include(),
     ]
 
@@ -24,7 +23,6 @@ version = '2.0.0a0'
 # process libsvm requirement
 import os
 from distutils.version import LooseVersion
-from xbob.extension.utils import egrep, find_header, find_library
 
 def libsvm_version(svm_h):
 
@@ -57,15 +55,26 @@ class libsvm:
 
   """
 
-  def __init__ (self, requirement=''):
+  def __init__ (self, requirement='', only_static=False):
     """
     Searches for libsvm in stock locations. Allows user to override.
 
     If the user sets the environment variable XBOB_PREFIX_PATH, that prefixes
     the standard path locations.
+
+    Parameters:
+
+    requirement, str
+      A string, indicating a version requirement for libsvm. For example,
+      ``'>= 3.12'``.
+
+    only_static, boolean
+      A flag, that indicates if we intend to link against the static library
+      only. This will trigger our library search to disconsider shared
+      libraries when searching.
     """
 
-    candidates = find_header('svm.h', subpaths=['svm'])
+    candidates = find_header('svm.h', subpaths=['libsvm'])
 
     if not candidates:
       raise RuntimeError("could not find libsvm's `svm.h' - have you installed libsvm on this machine?")
@@ -116,7 +125,7 @@ class libsvm:
     if ext in ['.so', '.a', '.dylib', '.dll']:
       self.libraries.append(name[3:]) #strip 'lib' from the name
     else: #link against the whole thing
-      self.libraries.append(':' + f)
+      self.libraries.append(':' + os.path.basename(candidates[0]))
 
     # library path
     self.library_directory = os.path.dirname(candidates[0])
@@ -147,7 +156,7 @@ define_macros = pkg.macros()
 
 setup(
 
-    name='xbob.learn.svm',
+    name='xbob.learn.libsvm',
     version=version,
     description='Bob bindings to libsvm',
     url='http://github.com/bioidiap/xbob.learn.libsvm',
@@ -172,9 +181,9 @@ setup(
       ],
 
     ext_modules = [
-      Extension("xbob.learn.svm.version",
+      Extension("xbob.learn.libsvm.version",
         [
-          "xbob/learn/svm/version.cpp",
+          "xbob/learn/libsvm/version.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,
@@ -184,9 +193,9 @@ setup(
         library_dirs = library_dirs,
         libraries = libraries,
         ),
-      Extension("xbob.learn.svm._library",
+      Extension("xbob.learn.libsvm._library",
         [
-          "xbob/learn/linear/file.cpp",
+          "xbob/learn/libsvm/file.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,

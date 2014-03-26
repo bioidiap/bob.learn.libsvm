@@ -23,7 +23,7 @@
 #include <xbob.blitz/capi.h>
 #include <xbob.blitz/cleanup.h>
 #include <xbob.io/config.h>
-#include <xbob.learn.linear/config.h>
+#include <xbob.learn.libsvm/config.h>
 
 static int dict_set(PyObject* d, const char* key, const char* value) {
   PyObject* v = Py_BuildValue("s", value);
@@ -45,11 +45,11 @@ static int dict_steal(PyObject* d, const char* key, PyObject* value) {
 /**
  * Describes the libsvm version
  */
-static PyObject* libsvm_version() {
+static PyObject* get_libsvm_version() {
   boost::format s("%d.%d");
   s % (LIBSVM_VERSION / 100);
   s % (LIBSVM_VERSION % 100);
-  return Py_BuildValue("s", f.str().c_str());
+  return Py_BuildValue("s", s.str().c_str());
 }
 
 /**
@@ -129,7 +129,7 @@ static PyObject* build_version_dictionary() {
   auto retval_ = make_safe(retval);
 
   if (!dict_set(retval, "Blitz++", BZ_VERSION)) return 0;
-  if (!dict_steal(retval, "libSVM", libsvm_version())) return 0;
+  if (!dict_steal(retval, "libSVM", get_libsvm_version())) return 0;
   if (!dict_steal(retval, "Boost", boost_version())) return 0;
   if (!dict_steal(retval, "Compiler", compiler_version())) return 0;
   if (!dict_steal(retval, "Python", python_version())) return 0;
@@ -172,7 +172,7 @@ static PyObject* create_module (void) {
   auto m_ = make_safe(m); ///< protects against early returns
 
   /* register version numbers and constants */
-  if (PyModule_AddIntConstant(m, "api", XBOB_LEARN_LINEAR_API_VERSION) < 0)
+  if (PyModule_AddIntConstant(m, "api", XBOB_LEARN_LIBSVM_API_VERSION) < 0)
     return 0;
   if (PyModule_AddStringConstant(m, "module", XBOB_EXT_MODULE_VERSION) < 0)
     return 0;
