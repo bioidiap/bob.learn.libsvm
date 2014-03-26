@@ -13,12 +13,11 @@
 .. image:: http://img.shields.io/pypi/dm/xbob.learn.libsvm.png
    :target: https://pypi.python.org/pypi/xbob.learn.libsvm
 
-====================================================
- Python bindings for bob.machine's SVM and Trainers
-====================================================
+================================
+ Bob-Python bindings for LIBSVM
+================================
 
-This package contains a set of Pythonic bindings for Bob's support vector
-machines and trainers.
+This package contains a set of Pythonic bindings for LIBSVM.
 
 Installation
 ------------
