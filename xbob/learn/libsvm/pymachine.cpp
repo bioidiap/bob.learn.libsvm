@@ -461,6 +461,69 @@ static PyObject* PyBobLearnLibsvmMachine_getShape
       self->cxx->outputSize());
 }
 
+PyDoc_STRVAR(s_labels_str, "labels");
+PyDoc_STRVAR(s_labels_doc, "The class labels this machine will output");
+
+static PyObject* PyBobLearnLibsvmMachine_getLabels
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  PyObject* retval = PyList_New(self->cxx->numberOfClasses());
+  for (size_t k=0; k<self->cxx->numberOfClasses(); ++k) {
+    PyList_SET_ITEM(retval, k, Py_BuildValue("i", self->cxx->classLabel(k)));
+  }
+  return retval;
+}
+
+PyDoc_STRVAR(s_svm_type_attr_str, "svm_type");
+PyDoc_STRVAR(s_svm_type_attr_doc, "The type of SVM machine contained");
+
+static PyObject* PyBobLearnLibsvmMachine_getSvmType
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  PyObject* retval = 0;
+  switch(self->cxx->machineType()) {
+    case bob::learn::libsvm::Machine::C_SVC:
+      return Py_BuildValue("s", "C_SVC");
+    case bob::learn::libsvm::Machine::NU_SVC:
+      return Py_BuildValue("s", "NU_SVC");
+    case bob::learn::libsvm::Machine::ONE_CLASS:
+      return Py_BuildValue("s", "ONE_CLASS");
+    case bob::learn::libsvm::Machine::EPSILON_SVR:
+      return Py_BuildValue("s", "EPSILON_SVR");
+    case bob::learn::libsvm::Machine::NU_SVR:
+      return Py_BuildValue("s", "NU_SVR");
+  }
+
+  // if you get to this point, an error occurred somewhere - corruption?
+  PyErr_Format("`%s' has a machine type which is not legal (%d) - DEBUG ME",
+      Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
+  return 0;
+}
+
+PyDoc_STRVAR(s_svm_kernel_type_attr_str, "kernel_type");
+PyDoc_STRVAR(s_svm_kernel_type_attr_doc,
+"The type of kernel used by the support vectors in this machine");
+
+static PyObject* PyBobLearnLibsvmMachine_getSvmKernelType
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  PyObject* retval = 0;
+  switch(self->cxx->kernelType()) {
+    case bob::learn::libsvm::Machine::LINEAR:
+      return Py_BuildValue("s", "LINEAR");
+    case bob::learn::libsvm::Machine::POLY:
+      return Py_BuildValue("s", "POLY");
+    case bob::learn::libsvm::Machine::RBF:
+      return Py_BuildValue("s", "RBF");
+    case bob::learn::libsvm::Machine::SIGMOID:
+      return Py_BuildValue("s", "SIGMOID");
+    case bob::learn::libsvm::Machine::PRECOMPUTED:
+      return Py_BuildValue("s", "PRECOMPUTED");
+  }
+
+  // if you get to this point, an error occurred somewhere - corruption?
+  PyErr_Format("`%s' has a kernel type which is not legal (%d) - DEBUG ME",
+      Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
+  return 0;
+}
+
 static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
     {
       s_input_subtract_str,
@@ -481,6 +544,27 @@ static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
       (getter)PyBobLearnLibsvmMachine_getShape,
       0,
       s_shape_doc,
+      0
+    },
+    {
+      s_labels_str,
+      (getter)PyBobLearnLibsvmMachine_getLabels,
+      0,
+      s_labels_doc,
+      0
+    },
+    {
+      s_svm_type_attr_str,
+      (getter)PyBobLearnLibsvmMachine_getSvmType,
+      0,
+      s_svm_type_attr_doc,
+      0
+    },
+    {
+      s_svm_kernel_type_attr_str,
+      (getter)PyBobLearnLibsvmMachine_getSvmKernelType,
+      0,
+      s_svm_kernel_type_attr_doc,
       0
     },
     {0}  /* Sentinel */
