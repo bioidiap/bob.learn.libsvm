@@ -17,7 +17,7 @@ include_dirs = [
     xbob.io.get_include(),
     ]
 
-packages = []
+packages = ['bob-core >= 1.2.2', 'bob-io >= 1.2.2']
 version = '2.0.0a0'
 
 # process libsvm requirement
@@ -195,6 +195,8 @@ setup(
         ),
       Extension("xbob.learn.libsvm._library",
         [
+          "xbob/learn/libsvm/pymachine.cpp",
+          "xbob/learn/libsvm/main.cpp",
           "xbob/learn/libsvm/file.cpp",
           "xbob/learn/libsvm/machine.cpp",
           "xbob/learn/libsvm/trainer.cpp",

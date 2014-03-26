@@ -1,3 +1,4 @@
+from ._library import *
 from . import version
 from .version import module as __version__
 from .version import api as __api_version__

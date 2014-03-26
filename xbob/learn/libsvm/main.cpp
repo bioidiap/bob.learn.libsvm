@@ -5,8 +5,8 @@
  * @brief Bindings to bob::machine
  */
 
-#define XBOB_LEARN_LINEAR_MODULE
-#include <xbob.learn.linear/api.h>
+#define XBOB_LEARN_LIBSVM_MODULE
+#include <xbob.learn.libsvm/api.h>
 
 #ifdef NO_IMPORT_ARRAY
 #undef NO_IMPORT_ARRAY
@@ -14,15 +14,14 @@
 #include <xbob.blitz/capi.h>
 #include <xbob.blitz/cleanup.h>
 #include <xbob.io/api.h>
-#include <xbob.learn.activation/api.h>
 
 static PyMethodDef module_methods[] = {
     {0}  /* Sentinel */
 };
 
-PyDoc_STRVAR(module_docstr, "bob::machine's linear machine and trainers");
+PyDoc_STRVAR(module_docstr, "bob::learn::libsvm's machine and trainers");
 
-int PyXbobLearnLinear_APIVersion = XBOB_LEARN_LINEAR_API_VERSION;
+int PyXbobLearnLibsvm_APIVersion = XBOB_LEARN_LIBSVM_API_VERSION;
 
 #if PY_VERSION_HEX >= 0x03000000
 static PyModuleDef module_definition = {
@@ -30,21 +29,31 @@ static PyModuleDef module_definition = {
   XBOB_EXT_MODULE_NAME,
   module_docstr,
   -1,
-  module_methods, 
+  module_methods,
   0, 0, 0, 0
 };
 #endif
 
 static PyObject* create_module (void) {
 
-  PyBobLearnLinearMachine_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobLearnLinearMachine_Type) < 0) return 0;
+  /**
+  PyBobLearnLibsvmFile_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobLearnLibsvmFile_Type) < 0) return 0;
+  **/
 
-  PyBobLearnLinearPCATrainer_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobLearnLinearPCATrainer_Type) < 0) return 0;
+  PyBobLearnLibsvmMachineSvmType_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
 
-  PyBobLearnLinearFisherLDATrainer_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobLearnLinearFisherLDATrainer_Type) < 0) return 0;
+  PyBobLearnLibsvmMachineSvmKernelType_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobLearnLibsvmMachineSvmKernelType_Type) < 0) return 0;
+
+  PyBobLearnLibsvmMachine_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobLearnLibsvmMachine_Type) < 0) return 0;
+
+  /**
+  PyBobLearnLibsvmTrainer_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
+  **/
 
 # if PY_VERSION_HEX >= 0x03000000
   PyObject* m = PyModule_Create(&module_definition);
@@ -55,20 +64,30 @@ static PyObject* create_module (void) {
   auto m_ = make_safe(m);
 
   /* register some constants */
-  if (PyModule_AddIntConstant(m, "__api_version__", XBOB_LEARN_LINEAR_API_VERSION) < 0) return 0;
+  if (PyModule_AddIntConstant(m, "__api_version__", XBOB_LEARN_LIBSVM_API_VERSION) < 0) return 0;
   if (PyModule_AddStringConstant(m, "__version__", XBOB_EXT_MODULE_VERSION) < 0) return 0;
 
   /* register the types to python */
-  Py_INCREF(&PyBobLearnLinearMachine_Type);
-  if (PyModule_AddObject(m, "Machine", (PyObject *)&PyBobLearnLinearMachine_Type) < 0) return 0;
+  /**
+  Py_INCREF(&PyBobLearnLibsvmFile_Type);
+  if (PyModule_AddObject(m, "File", (PyObject *)&PyBobLearnLibsvmFile_Type) < 0) return 0;
+  **/
 
-  Py_INCREF(&PyBobLearnLinearPCATrainer_Type);
-  if (PyModule_AddObject(m, "PCATrainer", (PyObject *)&PyBobLearnLinearPCATrainer_Type) < 0) return 0;
+  Py_INCREF(&PyBobLearnLibsvmMachineSvmType_Type);
+  if (PyModule_AddObject(m, "svm_type", (PyObject *)&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
 
-  Py_INCREF(&PyBobLearnLinearFisherLDATrainer_Type);
-  if (PyModule_AddObject(m, "FisherLDATrainer", (PyObject *)&PyBobLearnLinearFisherLDATrainer_Type) < 0) return 0;
+  Py_INCREF(&PyBobLearnLibsvmMachineSvmKernelType_Type);
+  if (PyModule_AddObject(m, "svm_kernel_type", (PyObject *)&PyBobLearnLibsvmMachineSvmKernelType_Type) < 0) return 0;
 
-  static void* PyXbobLearnLinear_API[PyXbobLearnLinear_API_pointers];
+  Py_INCREF(&PyBobLearnLibsvmMachine_Type);
+  if (PyModule_AddObject(m, "Machine", (PyObject *)&PyBobLearnLibsvmMachine_Type) < 0) return 0;
+
+  /**
+  Py_INCREF(&PyBobLearnLibsvmTrainer_Type);
+  if (PyModule_AddObject(m, "Trainer", (PyObject *)&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
+  **/
+
+  static void* PyXbobLearnLibsvm_API[PyXbobLearnLibsvm_API_pointers];
 
   /* exhaustive list of C APIs */
 
@@ -76,44 +95,46 @@ static PyObject* create_module (void) {
    * Versioning *
    **************/
 
-  PyXbobLearnLinear_API[PyXbobLearnLinear_APIVersion_NUM] = (void *)&PyXbobLearnLinear_APIVersion;
+  PyXbobLearnLibsvm_API[PyXbobLearnLibsvm_APIVersion_NUM] = (void *)&PyXbobLearnLibsvm_APIVersion;
+
+  /***************************************
+   * Bindings for xbob.learn.libsvm.File *
+   ***************************************/
+
+  /**
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmFile_Type_NUM] = (void *)&PyBobLearnLibsvmFile_Type;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmFile_Check_NUM] = (void *)&PyBobLearnLibsvmFile_Check;
+  **/
 
   /******************************************
-   * Bindings for xbob.learn.linear.Machine *
+   * Bindings for xbob.learn.libsvm.Machine *
    ******************************************/
 
-  PyXbobLearnLinear_API[PyBobLearnLinearMachine_Type_NUM] = (void *)&PyBobLearnLinearMachine_Type;
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_Type_NUM] = (void *)&PyBobLearnLibsvmMachine_Type;
 
-  PyXbobLearnLinear_API[PyBobLearnLinearMachine_Check_NUM] = (void *)&PyBobLearnLinearMachine_Check;
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_Check_NUM] = (void *)&PyBobLearnLibsvmMachine_Check;
 
-  PyXbobLearnLinear_API[PyBobLearnLinearMachine_NewFromSize_NUM] = (void *)&PyBobLearnLinearMachine_NewFromSize;
+  /******************************************
+   * Bindings for xbob.learn.libsvm.Trainer *
+   ******************************************/
 
-  /*********************************************
-   * Bindings for xbob.learn.linear.PCATrainer *
-   *********************************************/
+  /**
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Type_NUM] = (void *)&PyBobLearnLibsvmTrainer_Type;
 
-  PyXbobLearnLinear_API[PyBobLearnLinearPCATrainer_Type_NUM] = (void *)&PyBobLearnLinearPCATrainer_Type;
-
-  PyXbobLearnLinear_API[PyBobLearnLinearPCATrainer_Check_NUM] = (void *)&PyBobLearnLinearPCATrainer_Check;
-
-  /***************************************************
-   * Bindings for xbob.learn.linear.FisherLDATrainer *
-   ***************************************************/
-
-  PyXbobLearnLinear_API[PyBobLearnLinearFisherLDATrainer_Type_NUM] = (void *)&PyBobLearnLinearFisherLDATrainer_Type;
-
-  PyXbobLearnLinear_API[PyBobLearnLinearFisherLDATrainer_Check_NUM] = (void *)&PyBobLearnLinearFisherLDATrainer_Check;
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Check_NUM] = (void *)&PyBobLearnLibsvmTrainer_Check;
+  **/
 
 #if PY_VERSION_HEX >= 0x02070000
 
   /* defines the PyCapsule */
 
-  PyObject* c_api_object = PyCapsule_New((void *)PyXbobLearnLinear_API,
+  PyObject* c_api_object = PyCapsule_New((void *)PyXbobLearnLibsvm_API,
       XBOB_EXT_MODULE_PREFIX "." XBOB_EXT_MODULE_NAME "._C_API", 0);
 
 #else
 
-  PyObject* c_api_object = PyCObject_FromVoidPtr((void *)PyXbobLearnLinear_API, 0);
+  PyObject* c_api_object = PyCObject_FromVoidPtr((void *)PyXbobLearnLibsvm_API, 0);
 
 #endif
 
@@ -122,7 +143,6 @@ static PyObject* create_module (void) {
   /* imports xbob.learn.activation C-API + dependencies */
   if (import_xbob_blitz() < 0) return 0;
   if (import_xbob_io() < 0) return 0;
-  if (import_xbob_learn_activation() < 0) return 0;
 
   Py_INCREF(m);
   return m;

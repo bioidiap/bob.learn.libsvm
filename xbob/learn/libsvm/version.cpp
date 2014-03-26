@@ -129,7 +129,7 @@ static PyObject* build_version_dictionary() {
   auto retval_ = make_safe(retval);
 
   if (!dict_set(retval, "Blitz++", BZ_VERSION)) return 0;
-  if (!dict_steal(retval, "libSVM", get_libsvm_version())) return 0;
+  if (!dict_steal(retval, "LIBSVM", get_libsvm_version())) return 0;
   if (!dict_steal(retval, "Boost", boost_version())) return 0;
   if (!dict_steal(retval, "Compiler", compiler_version())) return 0;
   if (!dict_steal(retval, "Python", python_version())) return 0;

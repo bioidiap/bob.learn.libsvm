@@ -67,4 +67,24 @@ LIBSVM File Interface
    Checks if the input object ``o`` is a ``PyBobLearnLibsvmFileObject``.
    Returns ``1`` if it is, and ``0`` otherwise.
 
+LIBSVM Machine Interface
+------------------------
+
+.. cpp:type:: PyBobLearnLibsvmMachineObject
+
+   The pythonic object representation for a ``bob::learn::libsvm::Machine``
+   object.
+
+   .. code-block:: cpp
+
+      typedef struct {
+        PyObject_HEAD
+        bob::learn::libsvm::Machine* cxx;
+      } PyBobLearnLibsvmMachineObject
+
+   .. cpp:member:: bob::learn::libsvm::Machine* cxx
+
+      A pointer to the C++ file implementation.
+
+
 .. include:: links.rst
