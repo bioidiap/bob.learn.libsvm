@@ -1,10 +1,10 @@
 /**
  * @author Andre Anjos <andre.anjos@idiap.ch>
- * @date Tue 14 Jan 2014 14:26:09 CET
+ * @Thu 27 Mar 2014 15:44:46 CET
  *
  * @brief Bindings for a Bob compatible LIBSVM-based Machine for SVMs
  *
- * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
+ * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
 #define XBOB_LEARN_LIBSVM_MODULE
@@ -13,205 +13,6 @@
 #include <xbob.io/api.h>
 #include <xbob.learn.libsvm/api.h>
 #include <structmember.h>
-
-/************************************************
- * Implementation of xbob.learn.libsvm.svm_type *
- ************************************************/
-
-PyDoc_STRVAR(s_svm_type_str, XBOB_EXT_MODULE_PREFIX ".svm_type");
-
-PyDoc_STRVAR(s_svm_type_doc,
-"svm_type (C++ enumeration) - cannot be instantiated from Python\n\
-\n\
-Available values are:\n\
-\n\
-  * C_SVC\n\
-  * NU_SVC\n\
-  * ONE_CLASS\n\
-  * EPSILON_SVR\n\
-  * NU_SVR\n\
-\n\
-A dictionary containing all names and values available for this\n\
-enumeration is available through the attribute ``entries``.\n\
-"
-);
-
-static int insert_item_string(PyObject* dict, PyObject* entries,
-    const char* key, Py_ssize_t value) {
-  auto v = make_safe(Py_BuildValue("n", value));
-  if (PyDict_SetItemString(dict, key, v.get()) < 0) return -1;
-  return PyDict_SetItemString(entries, key, v.get());
-}
-
-static PyObject* create_svm_type_enumerations() {
-  auto retval = PyDict_New();
-  if (!retval) return 0;
-  auto retval_ = make_safe(retval);
-
-  auto entries = PyDict_New();
-  if (!entries) return 0;
-  auto entries_ = make_safe(entries);
-
-  if (insert_item_string(retval, entries, "C_SVC",
-        bob::learn::libsvm::Machine::C_SVC) < 0) return 0;
-  if (insert_item_string(retval, entries, "NU_SVC",
-        bob::learn::libsvm::Machine::NU_SVC) < 0) return 0;
-  if (insert_item_string(retval, entries, "ONE_CLASS",
-        bob::learn::libsvm::Machine::ONE_CLASS) < 0) return 0;
-  if (insert_item_string(retval, entries, "EPSILON_SVR",
-        bob::learn::libsvm::Machine::EPSILON_SVR) < 0) return 0;
-  if (insert_item_string(retval, entries, "NU_SVR",
-        bob::learn::libsvm::Machine::NU_SVR) < 0) return 0;
-
-  if (PyDict_SetItemString(retval, "entries", entries) < 0) return 0;
-
-  Py_INCREF(retval);
-  return retval;
-}
-
-static int PyBobLearnLibsvmMachineSvmType_Init(PyObject* self, PyObject*, PyObject*) {
-
-  PyErr_Format(PyExc_NotImplementedError, "cannot initialize C++ enumeration bindings `%s' - use one of the class' attached attributes instead", Py_TYPE(self)->tp_name);
-  return -1;
-
-}
-
-PyTypeObject PyBobLearnLibsvmMachineSvmType_Type = {
-    PyVarObject_HEAD_INIT(0, 0)
-    s_svm_type_str,                               /* tp_name */
-    sizeof(PyBobLearnLibsvmMachineSvmType_Type),  /* tp_basicsize */
-    0,                                            /* tp_itemsize */
-    0,                                            /* tp_dealloc */
-    0,                                            /* tp_print */
-    0,                                            /* tp_getattr */
-    0,                                            /* tp_setattr */
-    0,                                            /* tp_compare */
-    0,                                            /* tp_repr */
-    0,                                            /* tp_as_number */
-    0,                                            /* tp_as_sequence */
-    0,                                            /* tp_as_mapping */
-    0,                                            /* tp_hash */
-    0,                                            /* tp_call */
-    0,                                            /* tp_str*/
-    0,                                            /* tp_getattro*/
-    0,                                            /* tp_setattro*/
-    0,                                            /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,     /* tp_flags*/
-    s_svm_type_doc,                               /* tp_doc */
-    0,		                                        /* tp_traverse */
-    0,		                                        /* tp_clear */
-    0,                                            /* tp_richcompare */
-    0,		                                        /* tp_weaklistoffset */
-    0,		                                        /* tp_iter */
-    0,		                                        /* tp_iternext */
-    0,                                            /* tp_methods */
-    0,                                            /* tp_members */
-    0,                                            /* tp_getset */
-    0,                                            /* tp_base */
-    create_svm_type_enumerations(),               /* tp_dict */
-    0,                                            /* tp_descr_get */
-    0,                                            /* tp_descr_set */
-    0,                                            /* tp_dictoffset */
-    PyBobLearnLibsvmMachineSvmType_Init,          /* tp_init */
-    0,                                            /* tp_alloc */
-    0,                                            /* tp_new */
-};
-
-/*******************************************************
- * Implementation of xbob.learn.libsvm.svm_kernel_type *
- *******************************************************/
-
-PyDoc_STRVAR(s_svm_kernel_type_str, XBOB_EXT_MODULE_PREFIX ".svm_kernel_type");
-
-PyDoc_STRVAR(s_svm_kernel_type_doc,
-"svm_kernel_type (C++ enumeration) - cannot be instantiated from Python\n\
-\n\
-Available values are:\n\
-\n\
-  * LINEAR\n\
-  * POLY\n\
-  * RBF\n\
-  * SIGMOID\n\
-  * PRECOMPUTED\n\
-\n\
-A dictionary containing all names and values available for this\n\
-enumeration is available through the attribute ``entries``.\n\
-"
-);
-
-static PyObject* create_svm_kernel_type_enumerations() {
-  auto retval = PyDict_New();
-  if (!retval) return 0;
-  auto retval_ = make_safe(retval);
-
-  auto entries = PyDict_New();
-  if (!entries) return 0;
-  auto entries_ = make_safe(entries);
-
-  if (insert_item_string(retval, entries, "LINEAR",
-        bob::learn::libsvm::Machine::C_SVC) < 0) return 0;
-  if (insert_item_string(retval, entries, "POLY",
-        bob::learn::libsvm::Machine::NU_SVC) < 0) return 0;
-  if (insert_item_string(retval, entries, "RBF",
-        bob::learn::libsvm::Machine::ONE_CLASS) < 0) return 0;
-  if (insert_item_string(retval, entries, "SIGMOID",
-        bob::learn::libsvm::Machine::EPSILON_SVR) < 0) return 0;
-  if (insert_item_string(retval, entries, "PRECOMPUTED",
-        bob::learn::libsvm::Machine::NU_SVR) < 0) return 0;
-
-  if (PyDict_SetItemString(retval, "entries", entries) < 0) return 0;
-
-  Py_INCREF(retval);
-  return retval;
-}
-
-static int PyBobLearnLibsvmMachineSvmKernelType_Init(PyObject* self, PyObject*, PyObject*) {
-
-  PyErr_Format(PyExc_NotImplementedError, "cannot initialize C++ enumeration bindings `%s' - use one of the class' attached attributes instead", Py_TYPE(self)->tp_name);
-  return -1;
-
-}
-
-PyTypeObject PyBobLearnLibsvmMachineSvmKernelType_Type = {
-    PyVarObject_HEAD_INIT(0, 0)
-    s_svm_kernel_type_str,                              /* tp_name */
-    sizeof(PyBobLearnLibsvmMachineSvmKernelType_Type),  /* tp_basicsize */
-    0,                                                  /* tp_itemsize */
-    0,                                                  /* tp_dealloc */
-    0,                                                  /* tp_print */
-    0,                                                  /* tp_getattr */
-    0,                                                  /* tp_setattr */
-    0,                                                  /* tp_compare */
-    0,                                                  /* tp_repr */
-    0,                                                  /* tp_as_number */
-    0,                                                  /* tp_as_sequence */
-    0,                                                  /* tp_as_mapping */
-    0,                                                  /* tp_hash */
-    0,                                                  /* tp_call */
-    0,                                                  /* tp_str*/
-    0,                                                  /* tp_getattro*/
-    0,                                                  /* tp_setattro*/
-    0,                                                  /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,           /* tp_flags*/
-    s_svm_kernel_type_doc,                              /* tp_doc */
-    0,		                                              /* tp_traverse */
-    0,		                                              /* tp_clear */
-    0,                                                  /* tp_richcompare */
-    0,		                                              /* tp_weaklistoffset */
-    0,		                                              /* tp_iter */
-    0,		                                              /* tp_iternext */
-    0,                                                  /* tp_methods */
-    0,                                                  /* tp_members */
-    0,                                                  /* tp_getset */
-    0,                                                  /* tp_base */
-    create_svm_kernel_type_enumerations(),              /* tp_dict */
-    0,                                                  /* tp_descr_get */
-    0,                                                  /* tp_descr_set */
-    0,                                                  /* tp_dictoffset */
-    PyBobLearnLibsvmMachineSvmKernelType_Init,          /* tp_init */
-    0,                                                  /* tp_alloc */
-    0,                                                  /* tp_new */
-};
 
 /*******************************************************
  * Implementation of Support Vector Machine base class *
@@ -473,8 +274,8 @@ static PyObject* PyBobLearnLibsvmMachine_getLabels
   return retval;
 }
 
-PyDoc_STRVAR(s_svm_type_attr_str, "svm_type");
-PyDoc_STRVAR(s_svm_type_attr_doc, "The type of SVM machine contained");
+PyDoc_STRVAR(s_svm_type_str, "svm_type");
+PyDoc_STRVAR(s_svm_type_doc, "The type of SVM machine contained");
 
 static PyObject* PyBobLearnLibsvmMachine_getSvmType
 (PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
@@ -496,8 +297,8 @@ static PyObject* PyBobLearnLibsvmMachine_getSvmType
   return 0;
 }
 
-PyDoc_STRVAR(s_svm_kernel_type_attr_str, "kernel_type");
-PyDoc_STRVAR(s_svm_kernel_type_attr_doc,
+PyDoc_STRVAR(s_svm_kernel_type_str, "kernel_type");
+PyDoc_STRVAR(s_svm_kernel_type_doc,
 "The type of kernel used by the support vectors in this machine");
 
 static PyObject* PyBobLearnLibsvmMachine_getSvmKernelType
@@ -590,17 +391,17 @@ static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
       0
     },
     {
-      s_svm_type_attr_str,
+      s_svm_type_str,
       (getter)PyBobLearnLibsvmMachine_getSvmType,
       0,
-      s_svm_type_attr_doc,
+      s_svm_type_doc,
       0
     },
     {
-      s_svm_kernel_type_attr_str,
+      s_svm_kernel_type_str,
       (getter)PyBobLearnLibsvmMachine_getSvmKernelType,
       0,
-      s_svm_kernel_type_attr_doc,
+      s_svm_kernel_type_doc,
       0
     },
     {

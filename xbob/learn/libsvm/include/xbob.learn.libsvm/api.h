@@ -48,23 +48,33 @@ typedef struct {
  * Bindings for xbob.learn.libsvm.Machine *
  ******************************************/
 
-#define PyBobLearnLibsvmMachineSvmType_Type_NUM 3
-#define PyBobLearnLibsvmMachineSvmType_Type_TYPE PyTypeObject
-
-#define PyBobLearnLibsvmMachineSvmKernelType_Type_NUM 4
-#define PyBobLearnLibsvmMachineSvmKernelType_Type_TYPE PyTypeObject
-
 typedef struct {
   PyObject_HEAD
   bob::learn::libsvm::Machine* cxx;
 } PyBobLearnLibsvmMachineObject;
 
-#define PyBobLearnLibsvmMachine_Type_NUM 5
+#define PyBobLearnLibsvmMachine_Type_NUM 3
 #define PyBobLearnLibsvmMachine_Type_TYPE PyTypeObject
 
-#define PyBobLearnLibsvmMachine_Check_NUM 6
+#define PyBobLearnLibsvmMachine_Check_NUM 4
 #define PyBobLearnLibsvmMachine_Check_RET int
 #define PyBobLearnLibsvmMachine_Check_PROTO (PyObject* o)
+
+/******************************************
+ * Bindings for xbob.learn.libsvm.Trainer *
+ ******************************************/
+
+typedef struct {
+  PyObject_HEAD
+  bob::learn::libsvm::Trainer* cxx;
+} PyBobLearnLibsvmTrainerObject;
+
+#define PyBobLearnLibsvmTrainer_Type_NUM 5
+#define PyBobLearnLibsvmTrainer_Type_TYPE PyTypeObject
+
+#define PyBobLearnLibsvmTrainer_Check_NUM 6
+#define PyBobLearnLibsvmTrainer_Check_RET int
+#define PyBobLearnLibsvmTrainer_Check_PROTO (PyObject* o)
 
 /* Total number of C API pointers */
 #define PyXbobLearnLibsvm_API_pointers 7
@@ -91,13 +101,17 @@ typedef struct {
    * Bindings for xbob.learn.libsvm.Machine *
    ******************************************/
 
-  extern PyBobLearnLibsvmMachineSvmType_Type_TYPE PyBobLearnLibsvmMachineSvmType_Type;
-
-  extern PyBobLearnLibsvmMachineSvmKernelType_Type_TYPE PyBobLearnLibsvmMachineSvmKernelType_Type;
-
   extern PyBobLearnLibsvmMachine_Type_TYPE PyBobLearnLibsvmMachine_Type;
 
   PyBobLearnLibsvmMachine_Check_RET PyBobLearnLibsvmMachine_Check PyBobLearnLibsvmMachine_Check_PROTO;
+
+  /******************************************
+   * Bindings for xbob.learn.libsvm.Trainer *
+   ******************************************/
+
+  extern PyBobLearnLibsvmTrainer_Type_TYPE PyBobLearnLibsvmTrainer_Type;
+
+  PyBobLearnLibsvmTrainer_Check_RET PyBobLearnLibsvmTrainer_Check PyBobLearnLibsvmTrainer_Check_PROTO;
 
 #else
 
@@ -143,13 +157,17 @@ typedef struct {
    * Bindings for xbob.learn.libsvm.Machine *
    ******************************************/
 
-# define PyBobLearnLibsvmMachineSvmType_Type (*(PyBobLearnLibsvmMachineSvmType_Type_TYPE *)PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachineSvmType_Type_NUM])
-
-# define PyBobLearnLibsvmMachineSvmKernelType_Type (*(PyBobLearnLibsvmMachineSvmKernelType_Type_TYPE *)PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachineSvmKernelType_Type_NUM])
-
 # define PyBobLearnLibsvmMachine_Type (*(PyBobLearnLibsvmMachine_Type_TYPE *)PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_Type_NUM])
 
 # define PyBobLearnLibsvmMachine_Check (*(PyBobLearnLibsvmMachine_Check_RET (*)PyBobLearnLibsvmMachine_Check_PROTO) PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_Check_NUM])
+
+  /******************************************
+   * Bindings for xbob.learn.libsvm.Trainer *
+   ******************************************/
+
+# define PyBobLearnLibsvmTrainer_Type (*(PyBobLearnLibsvmTrainer_Type_TYPE *)PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Type_NUM])
+
+# define PyBobLearnLibsvmTrainer_Check (*(PyBobLearnLibsvmTrainer_Check_RET (*)PyBobLearnLibsvmTrainer_Check_PROTO) PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Check_NUM])
 
 # if !defined(NO_IMPORT_ARRAY)
 

@@ -39,19 +39,11 @@ static PyObject* create_module (void) {
   PyBobLearnLibsvmFile_Type.tp_new = PyType_GenericNew;
   if (PyType_Ready(&PyBobLearnLibsvmFile_Type) < 0) return 0;
 
-  PyBobLearnLibsvmMachineSvmType_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
-
-  PyBobLearnLibsvmMachineSvmKernelType_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobLearnLibsvmMachineSvmKernelType_Type) < 0) return 0;
-
   PyBobLearnLibsvmMachine_Type.tp_new = PyType_GenericNew;
   if (PyType_Ready(&PyBobLearnLibsvmMachine_Type) < 0) return 0;
 
-  /**
   PyBobLearnLibsvmTrainer_Type.tp_new = PyType_GenericNew;
   if (PyType_Ready(&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
-  **/
 
 # if PY_VERSION_HEX >= 0x03000000
   PyObject* m = PyModule_Create(&module_definition);
@@ -69,19 +61,11 @@ static PyObject* create_module (void) {
   Py_INCREF(&PyBobLearnLibsvmFile_Type);
   if (PyModule_AddObject(m, "File", (PyObject *)&PyBobLearnLibsvmFile_Type) < 0) return 0;
 
-  Py_INCREF(&PyBobLearnLibsvmMachineSvmType_Type);
-  if (PyModule_AddObject(m, "svm_type", (PyObject *)&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
-
-  Py_INCREF(&PyBobLearnLibsvmMachineSvmKernelType_Type);
-  if (PyModule_AddObject(m, "svm_kernel_type", (PyObject *)&PyBobLearnLibsvmMachineSvmKernelType_Type) < 0) return 0;
-
   Py_INCREF(&PyBobLearnLibsvmMachine_Type);
   if (PyModule_AddObject(m, "Machine", (PyObject *)&PyBobLearnLibsvmMachine_Type) < 0) return 0;
 
-  /**
   Py_INCREF(&PyBobLearnLibsvmTrainer_Type);
   if (PyModule_AddObject(m, "Trainer", (PyObject *)&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
-  **/
 
   static void* PyXbobLearnLibsvm_API[PyXbobLearnLibsvm_API_pointers];
 
@@ -113,11 +97,9 @@ static PyObject* create_module (void) {
    * Bindings for xbob.learn.libsvm.Trainer *
    ******************************************/
 
-  /**
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Type_NUM] = (void *)&PyBobLearnLibsvmTrainer_Type;
 
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Check_NUM] = (void *)&PyBobLearnLibsvmTrainer_Check;
-  **/
 
 #if PY_VERSION_HEX >= 0x02070000
 
