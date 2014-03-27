@@ -36,10 +36,8 @@ static PyModuleDef module_definition = {
 
 static PyObject* create_module (void) {
 
-  /**
   PyBobLearnLibsvmFile_Type.tp_new = PyType_GenericNew;
   if (PyType_Ready(&PyBobLearnLibsvmFile_Type) < 0) return 0;
-  **/
 
   PyBobLearnLibsvmMachineSvmType_Type.tp_new = PyType_GenericNew;
   if (PyType_Ready(&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
@@ -68,10 +66,8 @@ static PyObject* create_module (void) {
   if (PyModule_AddStringConstant(m, "__version__", XBOB_EXT_MODULE_VERSION) < 0) return 0;
 
   /* register the types to python */
-  /**
   Py_INCREF(&PyBobLearnLibsvmFile_Type);
   if (PyModule_AddObject(m, "File", (PyObject *)&PyBobLearnLibsvmFile_Type) < 0) return 0;
-  **/
 
   Py_INCREF(&PyBobLearnLibsvmMachineSvmType_Type);
   if (PyModule_AddObject(m, "svm_type", (PyObject *)&PyBobLearnLibsvmMachineSvmType_Type) < 0) return 0;
@@ -101,11 +97,9 @@ static PyObject* create_module (void) {
    * Bindings for xbob.learn.libsvm.File *
    ***************************************/
 
-  /**
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmFile_Type_NUM] = (void *)&PyBobLearnLibsvmFile_Type;
 
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmFile_Check_NUM] = (void *)&PyBobLearnLibsvmFile_Check;
-  **/
 
   /******************************************
    * Bindings for xbob.learn.libsvm.Machine *

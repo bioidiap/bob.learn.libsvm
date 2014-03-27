@@ -195,6 +195,7 @@ setup(
         ),
       Extension("xbob.learn.libsvm._library",
         [
+          "xbob/learn/libsvm/pyfile.cpp",
           "xbob/learn/libsvm/pymachine.cpp",
           "xbob/learn/libsvm/main.cpp",
           "xbob/learn/libsvm/file.cpp",
