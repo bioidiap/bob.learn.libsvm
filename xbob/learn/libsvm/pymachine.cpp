@@ -478,7 +478,6 @@ PyDoc_STRVAR(s_svm_type_attr_doc, "The type of SVM machine contained");
 
 static PyObject* PyBobLearnLibsvmMachine_getSvmType
 (PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
-  PyObject* retval = 0;
   switch(self->cxx->machineType()) {
     case bob::learn::libsvm::Machine::C_SVC:
       return Py_BuildValue("s", "C_SVC");
@@ -493,8 +492,7 @@ static PyObject* PyBobLearnLibsvmMachine_getSvmType
   }
 
   // if you get to this point, an error occurred somewhere - corruption?
-  PyErr_Format("`%s' has a machine type which is not legal (%d) - DEBUG ME",
-      Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
+  PyErr_Format(PyExc_AssertionError, "`%s' has a machine type which is not legal (%d) - DEBUG ME", Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
   return 0;
 }
 
@@ -504,7 +502,6 @@ PyDoc_STRVAR(s_svm_kernel_type_attr_doc,
 
 static PyObject* PyBobLearnLibsvmMachine_getSvmKernelType
 (PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
-  PyObject* retval = 0;
   switch(self->cxx->kernelType()) {
     case bob::learn::libsvm::Machine::LINEAR:
       return Py_BuildValue("s", "LINEAR");
@@ -519,9 +516,48 @@ static PyObject* PyBobLearnLibsvmMachine_getSvmKernelType
   }
 
   // if you get to this point, an error occurred somewhere - corruption?
-  PyErr_Format("`%s' has a kernel type which is not legal (%d) - DEBUG ME",
-      Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
+  PyErr_Format(PyExc_AssertionError, "`%s' has a kernel type which is not legal (%d) - DEBUG ME", Py_TYPE(self)->tp_name, (int)self->cxx->machineType());
   return 0;
+}
+
+PyDoc_STRVAR(s_degree_str, "degree");
+PyDoc_STRVAR(s_degree_doc,
+"The polinomial degree, only valid if the kernel is ``'POLY'``\n\
+(polynomial)");
+
+static PyObject* PyBobLearnLibsvmMachine_getPolynomialDegree
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  return Py_BuildValue("i", self->cxx->polynomialDegree());
+}
+
+PyDoc_STRVAR(s_gamma_str, "gamma");
+PyDoc_STRVAR(s_gamma_doc,
+"The :math:`\\gamma` parameter for ``'POLY'`` (polynomial),\n\
+``'RBF'`` (gaussian) or ``'SIGMOID'`` (sigmoidal) kernels");
+
+static PyObject* PyBobLearnLibsvmMachine_getGamma
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->gamma());
+}
+
+PyDoc_STRVAR(s_coef0_str, "coef0");
+PyDoc_STRVAR(s_coef0_doc,
+"The coefficient 0 for ``'POLY'`` (polynomial) or\n\
+``'SIGMOIDAL'`` (sigmoidal) kernels");
+
+static PyObject* PyBobLearnLibsvmMachine_getCoefficient0
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->coefficient0());
+}
+
+PyDoc_STRVAR(s_probability_str, "probability");
+PyDoc_STRVAR(s_probability_doc,
+"Set to ``True`` if this machine supports probability outputs");
+
+static PyObject* PyBobLearnLibsvmMachine_getSupportsProbability
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  if (self->cxx->supportsProbability()) Py_RETURN_TRUE;
+  Py_RETURN_FALSE;
 }
 
 static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
@@ -565,6 +601,34 @@ static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
       (getter)PyBobLearnLibsvmMachine_getSvmKernelType,
       0,
       s_svm_kernel_type_attr_doc,
+      0
+    },
+    {
+      s_degree_str,
+      (getter)PyBobLearnLibsvmMachine_getPolynomialDegree,
+      0,
+      s_degree_doc,
+      0
+    },
+    {
+      s_gamma_str,
+      (getter)PyBobLearnLibsvmMachine_getGamma,
+      0,
+      s_gamma_doc,
+      0
+    },
+    {
+      s_coef0_str,
+      (getter)PyBobLearnLibsvmMachine_getCoefficient0,
+      0,
+      s_coef0_doc,
+      0
+    },
+    {
+      s_probability_str,
+      (getter)PyBobLearnLibsvmMachine_getSupportsProbability,
+      0,
+      s_probability_doc,
       0
     },
     {0}  /* Sentinel */
@@ -618,7 +682,11 @@ PyObject* PyBobLearnLibsvmMachine_Str(PyBobLearnLibsvmMachineObject* self) {
 
 PyDoc_STRVAR(s_forward_str, "forward");
 PyDoc_STRVAR(s_forward_doc,
-"o.forward(input [, output]) -> array\n\
+"o.forward(input, [output]) -> array\n\
+\n\
+o.predict_class(input, [output]) -> array\n\
+\n\
+o(input, [output]) -> array\n\
 \n\
 Calculates the **predicted class** using this Machine, given\n\
 one single feature vector or multiple ones.\n\
@@ -731,6 +799,343 @@ static PyObject* PyBobLearnLibsvmMachine_forward
 
 }
 
+PyDoc_STRVAR(s_scores_str, "predict_class_and_scores");
+PyDoc_STRVAR(s_scores_doc,
+"o.predict_class_and_scores(input, [cls, [score]]) -> (array, array)\n\
+\n\
+Calculates the **predicted class** and output scores for the SVM using\n\
+the this Machine, given one single feature vector or multiple ones.\n\
+\n\
+The ``input`` array can be either 1D or 2D 64-bit float arrays.\n\
+The ``cls`` array, if provided, must be of type ``int64``,\n\
+always uni-dimensional. The ``cls`` output corresponds to the\n\
+predicted classes for each of the input rows. The ``score`` array,\n\
+if provided, must be of type ``float64`` (like ``input``) and have\n\
+as many rows as ``input`` and ``o.shape[1]`` columns, matching the \n\
+output size of this SVM.\n\
+\n\
+This method always returns a tuple composed of the predicted classes\n\
+for each row in the ``input`` array, with data type ``int64`` and\n\
+of scores for each output of the SVM in a 1D or 2D ``float64`` array.\n\
+If you don't provide the arrays upon calling this method, we will\n\
+allocate new ones internally and return them. If you are calling\n\
+this method on a tight loop, it is recommended you pass the ``cls``\n\
+and ``score`` arrays to avoid constant re-allocation.\n\
+");
+
+static PyObject* PyBobLearnLibsvmMachine_predictClassAndScores
+(PyBobLearnLibsvmMachineObject* self, PyObject* args, PyObject* kwds) {
+
+  static const char* const_kwlist[] = {"input", "cls", "score", 0};
+  static char** kwlist = const_cast<char**>(const_kwlist);
+
+  PyBlitzArrayObject* input = 0;
+  PyBlitzArrayObject* cls = 0;
+  PyBlitzArrayObject* score = 0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&|O&O&", kwlist,
+        &PyBlitzArray_Converter, &input,
+        &PyBlitzArray_OutputConverter, &cls,
+        &PyBlitzArray_OutputConverter, &score
+        )) return 0;
+
+  //protects acquired resources through this scope
+  auto input_ = make_safe(input);
+  auto cls_ = make_xsafe(cls);
+  auto score_ = make_xsafe(score);
+
+  if (input->type_num != NPY_FLOAT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit float arrays for input array `input'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (cls && cls->type_num != NPY_INT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit integer arrays for output array `cls'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (score && score->type_num != NPY_FLOAT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit float arrays for score array `score'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (input->ndim < 1 || input->ndim > 2) {
+    PyErr_Format(PyExc_TypeError, "`%s' only accepts 1 or 2-dimensional arrays (not %" PY_FORMAT_SIZE_T "dD arrays)", Py_TYPE(self)->tp_name, input->ndim);
+    return 0;
+  }
+
+  if (cls && cls->ndim != 1) {
+    PyErr_Format(PyExc_RuntimeError, "the `cls' array should always be 1D but you provided an object with %" PY_FORMAT_SIZE_T "d dimensions", cls->ndim);
+    return 0;
+  }
+
+  if (score && input->ndim != score->ndim) {
+    PyErr_Format(PyExc_RuntimeError, "Input and score arrays should have matching number of dimensions, but input array `input' has %" PY_FORMAT_SIZE_T "d dimensions while output array `score' has %" PY_FORMAT_SIZE_T "d dimensions", input->ndim, score->ndim);
+    return 0;
+  }
+
+  if (input->ndim == 1) {
+    if (input->shape[0] != (Py_ssize_t)self->cxx->inputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "1D `input' array should have %" PY_FORMAT_SIZE_T "d elements matching `%s' input size, not %" PY_FORMAT_SIZE_T "d elements", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[0]);
+      return 0;
+    }
+    if (cls && cls->shape[0] != 1) {
+      PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have 1 element, not %" PY_FORMAT_SIZE_T "d elements", cls->shape[0]);
+      return 0;
+    }
+    if (score && score->shape[0] != (Py_ssize_t)self->cxx->outputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "1D `score' array should have %" PY_FORMAT_SIZE_T "d elements matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, score->shape[0]);
+      return 0;
+    }
+  }
+  else {
+    if (input->shape[1] != (Py_ssize_t)self->cxx->inputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "2D `input' array should have %" PY_FORMAT_SIZE_T "d columns, matching `%s' input size, not %" PY_FORMAT_SIZE_T "d elements", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[1]);
+      return 0;
+    }
+    if (cls && input->shape[0] != cls->shape[0]) {
+      PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have %" PY_FORMAT_SIZE_T "d elements matching the number of rows on `input', not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], cls->shape[0]);
+      return 0;
+    }
+    if (score && score->shape[1] != (Py_ssize_t)self->cxx->outputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "2D `score' array should have %" PY_FORMAT_SIZE_T "d columns matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, score->shape[1]);
+      return 0;
+    }
+    if (score && input->shape[0] != score->shape[0]) {
+      PyErr_Format(PyExc_RuntimeError, "2D `score' array should have %" PY_FORMAT_SIZE_T "d rows matching `input' size, not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], score->shape[0]);
+      return 0;
+    }
+  }
+
+  /** if ``cls`` was not pre-allocated, do it now **/
+  if (!cls) {
+    Py_ssize_t osize = 1;
+    if (input->ndim == 2) osize = input->shape[0];
+    cls = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_INT64, 1, &osize);
+    cls_ = make_safe(cls);
+  }
+
+  /** if ``score`` was not pre-allocated, do it now **/
+  if (!score) {
+    Py_ssize_t osize[2];
+    if (input->ndim == 1) {
+      osize[0] = self->cxx->outputSize();
+    }
+    else {
+      osize[0] = input->shape[0];
+      osize[1] = self->cxx->outputSize();
+    }
+    score = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_FLOAT64, input->ndim, osize);
+    score_ = make_safe(score);
+  }
+
+  /** all basic checks are done, can call the machine now **/
+  try {
+    if (input->ndim == 1) {
+      auto bzin = PyBlitzArrayCxx_AsBlitz<double,1>(input);
+      auto bzcls = PyBlitzArrayCxx_AsBlitz<int64_t,1>(cls);
+      auto bzscore = PyBlitzArrayCxx_AsBlitz<double,1>(score);
+      (*bzcls)(0) = self->cxx->predictClassAndScores_(*bzin, *bzscore);
+    }
+    else {
+      auto bzin = PyBlitzArrayCxx_AsBlitz<double,2>(input);
+      auto bzcls = PyBlitzArrayCxx_AsBlitz<int64_t,1>(cls);
+      auto bzscore = PyBlitzArrayCxx_AsBlitz<double,2>(score);
+      blitz::Range all = blitz::Range::all();
+      for (int k=0; k<bzin->extent(0); ++k) {
+        blitz::Array<double,1> i_ = (*bzin)(k, all);
+        blitz::Array<double,1> s_ = (*bzscore)(k, all);
+        (*bzcls)(k) = self->cxx->predictClassAndScores_(i_, s_);
+      }
+    }
+  }
+  catch (std::exception& e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    return 0;
+  }
+  catch (...) {
+    PyErr_Format(PyExc_RuntimeError, "%s cannot forward data: unknown exception caught", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  Py_INCREF(cls);
+  Py_INCREF(score);
+  return Py_BuildValue("OO",
+      PyBlitzArray_NUMPY_WRAP(reinterpret_cast<PyObject*>(cls)),
+      PyBlitzArray_NUMPY_WRAP(reinterpret_cast<PyObject*>(score))
+      );
+
+}
+
+PyDoc_STRVAR(s_probabilities_str, "predict_class_and_probabilities");
+PyDoc_STRVAR(s_probabilities_doc,
+"o.predict_class_and_probabilities(input, [cls, [prob]]) -> (array, array)\n\
+\n\
+Calculates the **predicted class** and output probabilities for the\n\
+SVM using the this Machine, given one single feature vector or\n\
+multiple ones.\n\
+\n\
+The ``input`` array can be either 1D or 2D 64-bit float arrays.\n\
+The ``cls`` array, if provided, must be of type ``int64``,\n\
+always uni-dimensional. The ``cls`` output corresponds to the\n\
+predicted classes for each of the input rows. The ``prob`` array,\n\
+if provided, must be of type ``float64`` (like ``input``) and have\n\
+as many rows as ``input`` and ``o.shape[1]`` columns, matching the \n\
+output size of this SVM.\n\
+\n\
+This method always returns a tuple composed of the predicted classes\n\
+for each row in the ``input`` array, with data type ``int64`` and\n\
+of probabilities for each output of the SVM in a 1D or 2D ``float64``\n\
+array. If you don't provide the arrays upon calling this method, we\n\
+will allocate new ones internally and return them. If you are calling\n\
+this method on a tight loop, it is recommended you pass the ``cls``\n\
+and ``prob`` arrays to avoid constant re-allocation.\n\
+");
+
+static PyObject* PyBobLearnLibsvmMachine_predictClassAndProbabilities
+(PyBobLearnLibsvmMachineObject* self, PyObject* args, PyObject* kwds) {
+
+  static const char* const_kwlist[] = {"input", "cls", "prob", 0};
+  static char** kwlist = const_cast<char**>(const_kwlist);
+
+  PyBlitzArrayObject* input = 0;
+  PyBlitzArrayObject* cls = 0;
+  PyBlitzArrayObject* prob= 0;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&|O&O&", kwlist,
+        &PyBlitzArray_Converter, &input,
+        &PyBlitzArray_OutputConverter, &cls,
+        &PyBlitzArray_OutputConverter, &prob
+        )) return 0;
+
+  //protects acquired resources through this scope
+  auto input_ = make_safe(input);
+  auto cls_ = make_xsafe(cls);
+  auto prob_ = make_xsafe(prob);
+
+  if (input->type_num != NPY_FLOAT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit float arrays for input array `input'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (cls && cls->type_num != NPY_INT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit integer arrays for output array `cls'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (prob && prob->type_num != NPY_FLOAT64) {
+    PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit float arrays for probability array `prob'", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  if (input->ndim < 1 || input->ndim > 2) {
+    PyErr_Format(PyExc_TypeError, "`%s' only accepts 1 or 2-dimensional arrays (not %" PY_FORMAT_SIZE_T "dD arrays)", Py_TYPE(self)->tp_name, input->ndim);
+    return 0;
+  }
+
+  if (cls && cls->ndim != 1) {
+    PyErr_Format(PyExc_RuntimeError, "the `cls' array should always be 1D but you provided an object with %" PY_FORMAT_SIZE_T "d dimensions", cls->ndim);
+    return 0;
+  }
+
+  if (prob && input->ndim != prob->ndim) {
+    PyErr_Format(PyExc_RuntimeError, "Input and probability arrays should have matching number of dimensions, but input array `input' has %" PY_FORMAT_SIZE_T "d dimensions while output array `prob' has %" PY_FORMAT_SIZE_T "d dimensions", input->ndim, prob->ndim);
+    return 0;
+  }
+
+  if (input->ndim == 1) {
+    if (input->shape[0] != (Py_ssize_t)self->cxx->inputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "1D `input' array should have %" PY_FORMAT_SIZE_T "d elements matching `%s' input size, not %" PY_FORMAT_SIZE_T "d elements", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[0]);
+      return 0;
+    }
+    if (cls && cls->shape[0] != 1) {
+      PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have 1 element, not %" PY_FORMAT_SIZE_T "d elements", cls->shape[0]);
+      return 0;
+    }
+    if (prob && prob->shape[0] != (Py_ssize_t)self->cxx->outputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "1D `prob' array should have %" PY_FORMAT_SIZE_T "d elements matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, prob->shape[0]);
+      return 0;
+    }
+  }
+  else {
+    if (input->shape[1] != (Py_ssize_t)self->cxx->inputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "2D `input' array should have %" PY_FORMAT_SIZE_T "d columns, matching `%s' input size, not %" PY_FORMAT_SIZE_T "d elements", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[1]);
+      return 0;
+    }
+    if (cls && input->shape[0] != cls->shape[0]) {
+      PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have %" PY_FORMAT_SIZE_T "d elements matching the number of rows on `input', not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], cls->shape[0]);
+      return 0;
+    }
+    if (prob && prob->shape[1] != (Py_ssize_t)self->cxx->outputSize()) {
+      PyErr_Format(PyExc_RuntimeError, "2D `prob' array should have %" PY_FORMAT_SIZE_T "d columns matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, prob->shape[1]);
+      return 0;
+    }
+    if (prob && input->shape[0] != prob->shape[0]) {
+      PyErr_Format(PyExc_RuntimeError, "2D `prob' array should have %" PY_FORMAT_SIZE_T "d rows matching `input' size, not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], prob->shape[0]);
+      return 0;
+    }
+  }
+
+  /** if ``cls`` was not pre-allocated, do it now **/
+  if (!cls) {
+    Py_ssize_t osize = 1;
+    if (input->ndim == 2) osize = input->shape[0];
+    cls = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_INT64, 1, &osize);
+    cls_ = make_safe(cls);
+  }
+
+  /** if ``prob`` was not pre-allocated, do it now **/
+  if (!prob) {
+    Py_ssize_t osize[2];
+    if (input->ndim == 1) {
+      osize[0] = self->cxx->outputSize();
+    }
+    else {
+      osize[0] = input->shape[0];
+      osize[1] = self->cxx->outputSize();
+    }
+    prob = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_FLOAT64, input->ndim, osize);
+    prob_ = make_safe(prob);
+  }
+
+  /** all basic checks are done, can call the machine now **/
+  try {
+    if (input->ndim == 1) {
+      auto bzin = PyBlitzArrayCxx_AsBlitz<double,1>(input);
+      auto bzcls = PyBlitzArrayCxx_AsBlitz<int64_t,1>(cls);
+      auto bzprob = PyBlitzArrayCxx_AsBlitz<double,1>(prob);
+      (*bzcls)(0) = self->cxx->predictClassAndProbabilities_(*bzin, *bzprob);
+    }
+    else {
+      auto bzin = PyBlitzArrayCxx_AsBlitz<double,2>(input);
+      auto bzcls = PyBlitzArrayCxx_AsBlitz<int64_t,1>(cls);
+      auto bzprob = PyBlitzArrayCxx_AsBlitz<double,2>(prob);
+      blitz::Range all = blitz::Range::all();
+      for (int k=0; k<bzin->extent(0); ++k) {
+        blitz::Array<double,1> i_ = (*bzin)(k, all);
+        blitz::Array<double,1> p_ = (*bzprob)(k, all);
+        (*bzcls)(k) = self->cxx->predictClassAndProbabilities_(i_, p_);
+      }
+    }
+  }
+  catch (std::exception& e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    return 0;
+  }
+  catch (...) {
+    PyErr_Format(PyExc_RuntimeError, "%s cannot forward data: unknown exception caught", Py_TYPE(self)->tp_name);
+    return 0;
+  }
+
+  Py_INCREF(cls);
+  Py_INCREF(prob);
+  return Py_BuildValue("OO",
+      PyBlitzArray_NUMPY_WRAP(reinterpret_cast<PyObject*>(cls)),
+      PyBlitzArray_NUMPY_WRAP(reinterpret_cast<PyObject*>(prob))
+      );
+
+}
+
 PyDoc_STRVAR(s_save_str, "save");
 PyDoc_STRVAR(s_save_doc,
 "o.save(path) -> None\n\
@@ -812,6 +1217,18 @@ static PyMethodDef PyBobLearnLibsvmMachine_methods[] = {
     (PyCFunction)PyBobLearnLibsvmMachine_forward,
     METH_VARARGS|METH_KEYWORDS,
     s_forward_doc
+  },
+  {
+    s_scores_str,
+    (PyCFunction)PyBobLearnLibsvmMachine_predictClassAndScores,
+    METH_VARARGS|METH_KEYWORDS,
+    s_scores_doc,
+  },
+  {
+    s_probabilities_str,
+    (PyCFunction)PyBobLearnLibsvmMachine_predictClassAndProbabilities,
+    METH_VARARGS|METH_KEYWORDS,
+    s_probabilities_doc,
   },
   {
     s_save_str,
