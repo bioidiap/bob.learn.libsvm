@@ -13,6 +13,7 @@ import numpy
 import tempfile
 import pkg_resources
 import nose.tools
+import xbob.io
 
 from xbob.learn.libsvm import File, Machine, svm_kernel_type, svm_type
 
@@ -39,17 +40,9 @@ IRIS_EXPECTED = F('iris.out') #expected probabilities
 def load_expected(filename):
   """Loads libsvm's svm-predict output file with probabilities"""
 
-  f = open(filename, 'rt')
-  labels = [int(k) for k in f.readline().split()[1:]]
-
-  predictions = []
-  probabilities = []
-  for k in f: #load the remaning lines
-    s = k.split()
-    predictions.append(int(s[0]))
-    probabilities.append(numpy.array([float(c) for c in s[1:]], 'float64'))
-
-  return tuple(labels), tuple(predictions), tuple(probabilities)
+  all_labels = sorted([int(k) for k in open(filename).readline().split()[1:]])
+  data = numpy.loadtxt(filename, dtype='float64', skiprows=1)
+  return all_labels, data[:,0].astype('int64'), data[:,1:]
 
 #extracted by running svm-predict.c on the heart_scale example data
 expected_heart_predictions = (1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1,
@@ -79,8 +72,8 @@ def test_can_load():
 
   machine = Machine(HEART_MACHINE)
   nose.tools.eq_(machine.shape, (13,1))
-  nose.tools.eq_(machine.kernel_type, svm_kernel_type.RBF)
-  nose.tools.eq_(machine.svm_type, svm_type.C_SVC)
+  nose.tools.eq_(machine.kernel_type, 'RBF')
+  nose.tools.eq_(machine.svm_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
@@ -96,8 +89,8 @@ def test_can_save():
   # make sure that the save machine is the same as before
   machine = Machine(tmp)
   nose.tools.eq_(machine.shape, (13,1))
-  nose.tools.eq_(machine.kernel_type, svm_kernel_type.RBF)
-  nose.tools.eq_(machine.svm_type, svm_type.C_SVC)
+  nose.tools.eq_(machine.kernel_type, 'RBF')
+  nose.tools.eq_(machine.svm_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
@@ -109,14 +102,14 @@ def test_can_save_hdf5():
 
   machine = Machine(HEART_MACHINE)
   tmp = tempname('.hdf5')
-  machine.save(bob.io.HDF5File(tmp, 'w'))
+  machine.save(xbob.io.HDF5File(tmp, 'w'))
   del machine
 
   # make sure that the save machine is the same as before
-  machine = Machine(bob.io.HDF5File(tmp))
+  machine = Machine(xbob.io.HDF5File(tmp))
   nose.tools.eq_(machine.shape, (13,1))
-  nose.tools.eq_(machine.kernel_type, svm_kernel_type.RBF)
-  nose.tools.eq_(machine.svm_type, svm_type.C_SVC)
+  nose.tools.eq_(machine.kernel_type, 'RBF')
+  nose.tools.eq_(machine.svm_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
@@ -139,12 +132,10 @@ def test_data_loading():
   all_data = []
   all_labels = []
   while data.good():
-    values = numpy.ndarray(data.shape, 'float64')
-    label = data.read(values)
-    if label:
-      all_labels.append(label)
-      all_data.append(values)
-  all_labels = tuple(all_labels)
+    entry = data.read()
+    if entry is not None:
+      all_labels.append(entry[0])
+      all_data.append(entry[1])
 
   nose.tools.eq_(len(all_data), len(all_labels))
   nose.tools.eq_(len(all_data), 270)
@@ -162,7 +153,7 @@ def test_data_loading():
   #tries loading the file all in a single shot
   data.reset()
   labels, data = data.read_all()
-  nose.tools.eq_(labels, all_labels)
+  assert numpy.array_equal(labels, all_labels)
   for k, l in zip(data, all_data):
     assert numpy.array_equal(k, l)
 
@@ -179,34 +170,31 @@ def test_data_loading():
     nose.tools.eq_( l, labels[k] )
     assert numpy.array_equal(e, data[k])
 
-@self.assert_raises(RuntimeError)
+@nose.tools.raises(RuntimeError)
 def test_raises():
 
   #tests that the normal machine raises because probabilities are not
   #supported on that model
   machine = Machine(TEST_MACHINE_NO_PROBS)
   labels, data = File(HEART_DATA).read_all()
-  data = numpy.vstack(data)
-  machine.predict_classes_and_probabilities(data)
+  machine.predict_class_and_probabilities(data)
 
 def test_correctness_heart():
 
   #tests the correctness of the libSVM bindings
   machine = Machine(HEART_MACHINE)
   labels, data = File(HEART_DATA).read_all()
-  data = numpy.vstack(data)
-
   pred_label = machine.predict_class(data)
 
-  nose.tools.eq_(pred_label, expected_heart_predictions)
+  assert numpy.array_equal(pred_label, expected_heart_predictions)
 
   #finally, we test if the values also work fine.
   pred_lab_values = [machine.predict_class_and_scores(k) for k in data]
 
   #tries the variant with multiple inputs
-  pred_labels2, pred_scores2 = machine.predict_classes_and_scores(data)
-  nose.tools.eq_( expected_heart_predictions,  pred_labels2 )
-  nose.tools.eq_( tuple([k[1] for k in pred_lab_values]), pred_scores2 )
+  pred_labels2, pred_scores2 = machine.predict_class_and_scores(data)
+  assert numpy.array_equal(expected_heart_predictions,  pred_labels2)
+  assert numpy.array_equal(tuple([k[1] for k in pred_lab_values]), pred_scores2)
 
   #tries to get the probabilities - note: for some reason, when getting
   #probabilities, the labels change, but notice the note bellow:
@@ -222,27 +210,25 @@ def test_correctness_heart():
   # parameter set as more differences will be observed.
   all_labels, real_labels, real_probs = load_expected(HEART_EXPECTED)
 
-  pred_labels, pred_probs = machine.predict_classes_and_probabilities(data)
-  nose.tools.eq_(pred_labels, real_labels)
-  assert numpy.all(abs(numpy.vstack(pred_probs) - numpy.vstack(real_probs)) < 1e-6)
+  pred_labels, pred_probs = machine.predict_class_and_probabilities(data)
+  assert numpy.array_equal(pred_labels, real_labels)
+  assert numpy.all(abs(pred_probs - real_probs) < 1e-6)
 
 def test_correctness_iris():
 
   #same test as above, but with a 3-class problem.
   machine = Machine(IRIS_MACHINE)
   labels, data = File(IRIS_DATA).read_all()
-  data = numpy.vstack(data)
-
   pred_label = machine.predict_class(data)
 
-  nose.tools.eq_(pred_label, expected_iris_predictions)
+  assert numpy.array_equal(pred_label, expected_iris_predictions)
 
   #finally, we test if the values also work fine.
   pred_lab_values = [machine.predict_class_and_scores(k) for k in data]
 
   #tries the variant with multiple inputs
-  pred_labels2, pred_scores2 = machine.predict_classes_and_scores(data)
-  nose.tools.eq_( expected_iris_predictions,  pred_labels2 )
+  pred_labels2, pred_scores2 = machine.predict_class_and_scores(data)
+  assert numpy.array_equal(expected_iris_predictions,  pred_labels2)
   assert numpy.all(abs(numpy.vstack([k[1] for k in
     pred_lab_values]) - numpy.vstack(pred_scores2)) < 1e-20 )
 
@@ -251,20 +237,18 @@ def test_correctness_iris():
 
   all_labels, real_labels, real_probs = load_expected(IRIS_EXPECTED)
 
-  pred_labels, pred_probs = machine.predict_classes_and_probabilities(data)
-  nose.tools.eq_(pred_labels, real_labels)
+  pred_labels, pred_probs = machine.predict_class_and_probabilities(data)
+  assert numpy.array_equal(pred_labels, real_labels)
   assert numpy.all(abs(numpy.vstack(pred_probs) - numpy.vstack(real_probs)) < 1e-6)
 
+@nose.tools.raises(RuntimeError)
 def test_correctness_inputsize_exceeds():
 
   #same test as above, but test for excess input
   machine = Machine(IRIS_MACHINE)
   labels, data = File(IRIS_DATA).read_all()
-  data = numpy.vstack(data)
 
   # add extra columns to the input data
   data = numpy.hstack([data, numpy.ones((data.shape[0], 2), dtype=float)])
 
   pred_label = machine.predict_class(data)
-
-  nose.tools.eq_(pred_label, expected_iris_predictions)

@@ -752,7 +752,7 @@ static PyObject* PyBobLearnLibsvmMachine_forward
   }
   else {
     if (input->shape[1] != (Py_ssize_t)self->cxx->inputSize()) {
-      PyErr_Format(PyExc_RuntimeError, "2D `input' array should have %" PY_FORMAT_SIZE_T "d columns, matching `%s' input size, not %" PY_FORMAT_SIZE_T "d elements", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[1]);
+      PyErr_Format(PyExc_RuntimeError, "2D `input' array should have %" PY_FORMAT_SIZE_T "d columns, matching `%s' input size, not %" PY_FORMAT_SIZE_T "d", self->cxx->inputSize(), Py_TYPE(self)->tp_name, input->shape[1]);
       return 0;
     }
     if (output && input->shape[0] != output->shape[0]) {
@@ -777,7 +777,7 @@ static PyObject* PyBobLearnLibsvmMachine_forward
     }
     else {
       auto bzin = PyBlitzArrayCxx_AsBlitz<double,2>(input);
-      auto bzout = PyBlitzArrayCxx_AsBlitz<int64_t,2>(output);
+      auto bzout = PyBlitzArrayCxx_AsBlitz<int64_t,1>(output);
       blitz::Range all = blitz::Range::all();
       for (int k=0; k<bzin->extent(0); ++k) {
         blitz::Array<double,1> i_ = (*bzin)(k, all);
@@ -803,16 +803,24 @@ PyDoc_STRVAR(s_scores_str, "predict_class_and_scores");
 PyDoc_STRVAR(s_scores_doc,
 "o.predict_class_and_scores(input, [cls, [score]]) -> (array, array)\n\
 \n\
-Calculates the **predicted class** and output scores for the SVM using\n\
-the this Machine, given one single feature vector or multiple ones.\n\
+Calculates the **predicted class** and output scores for the SVM\n\
+using the this Machine, given one single feature vector or multiple\n\
+ones.\n\
 \n\
 The ``input`` array can be either 1D or 2D 64-bit float arrays.\n\
 The ``cls`` array, if provided, must be of type ``int64``,\n\
 always uni-dimensional. The ``cls`` output corresponds to the\n\
 predicted classes for each of the input rows. The ``score`` array,\n\
 if provided, must be of type ``float64`` (like ``input``) and have\n\
-as many rows as ``input`` and ``o.shape[1]`` columns, matching the \n\
-output size of this SVM.\n\
+as many rows as ``input`` and ``C`` columns, matching the \n\
+number of combinations of the outputs 2-by-2. To score, LIBSVM\n\
+will compare the SV outputs for each set two classes in the machine\n\
+and output 1 score. If there is only 1 output, then the problem is\n\
+binary and only 1 score is produced (``C = 1``). If the SVM is\n\
+multi-class, then the number of combinations ``C`` is the total\n\
+amount of output combinations which is possible. If ``N`` is\n\
+the number of classes in this SVM, then :math:`C = N\\cdot(N-1)/2`.\n\
+If ``N = 3``, then ``C = 3``. If ``N = 5``, then ``C = 10``.\n\
 \n\
 This method always returns a tuple composed of the predicted classes\n\
 for each row in the ``input`` array, with data type ``int64`` and\n\
@@ -843,6 +851,11 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndScores
   auto input_ = make_safe(input);
   auto cls_ = make_xsafe(cls);
   auto score_ = make_xsafe(score);
+
+  //calculates the number of scores expected: combinatorics between
+  //all class outputs
+  Py_ssize_t N = self->cxx->outputSize();
+  Py_ssize_t number_of_scores = N < 2 ? 1 : (N*(N-1))/2;
 
   if (input->type_num != NPY_FLOAT64) {
     PyErr_Format(PyExc_TypeError, "`%s' only supports 64-bit float arrays for input array `input'", Py_TYPE(self)->tp_name);
@@ -883,8 +896,8 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndScores
       PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have 1 element, not %" PY_FORMAT_SIZE_T "d elements", cls->shape[0]);
       return 0;
     }
-    if (score && score->shape[0] != (Py_ssize_t)self->cxx->outputSize()) {
-      PyErr_Format(PyExc_RuntimeError, "1D `score' array should have %" PY_FORMAT_SIZE_T "d elements matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, score->shape[0]);
+    if (score && score->shape[0] != number_of_scores) {
+      PyErr_Format(PyExc_RuntimeError, "1D `score' array should have %" PY_FORMAT_SIZE_T "d elements matching the expected number of scores for `%s', not %" PY_FORMAT_SIZE_T "d elements", number_of_scores, Py_TYPE(self)->tp_name, score->shape[0]);
       return 0;
     }
   }
@@ -897,8 +910,8 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndScores
       PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have %" PY_FORMAT_SIZE_T "d elements matching the number of rows on `input', not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], cls->shape[0]);
       return 0;
     }
-    if (score && score->shape[1] != (Py_ssize_t)self->cxx->outputSize()) {
-      PyErr_Format(PyExc_RuntimeError, "2D `score' array should have %" PY_FORMAT_SIZE_T "d columns matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, score->shape[1]);
+    if (score && score->shape[1] != number_of_scores) {
+      PyErr_Format(PyExc_RuntimeError, "2D `score' array should have %" PY_FORMAT_SIZE_T "d columns matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", number_of_scores, Py_TYPE(self)->tp_name, score->shape[1]);
       return 0;
     }
     if (score && input->shape[0] != score->shape[0]) {
@@ -919,11 +932,11 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndScores
   if (!score) {
     Py_ssize_t osize[2];
     if (input->ndim == 1) {
-      osize[0] = self->cxx->outputSize();
+      osize[0] = number_of_scores;
     }
     else {
       osize[0] = input->shape[0];
-      osize[1] = self->cxx->outputSize();
+      osize[1] = number_of_scores;
     }
     score = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_FLOAT64, input->ndim, osize);
     score_ = make_safe(score);
@@ -980,8 +993,8 @@ The ``cls`` array, if provided, must be of type ``int64``,\n\
 always uni-dimensional. The ``cls`` output corresponds to the\n\
 predicted classes for each of the input rows. The ``prob`` array,\n\
 if provided, must be of type ``float64`` (like ``input``) and have\n\
-as many rows as ``input`` and ``o.shape[1]`` columns, matching the \n\
-output size of this SVM.\n\
+as many rows as ``input`` and ``len(o.labels)`` columns, matching\n\
+the number of classes for this SVM.\n\
 \n\
 This method always returns a tuple composed of the predicted classes\n\
 for each row in the ``input`` array, with data type ``int64`` and\n\
@@ -994,6 +1007,11 @@ and ``prob`` arrays to avoid constant re-allocation.\n\
 
 static PyObject* PyBobLearnLibsvmMachine_predictClassAndProbabilities
 (PyBobLearnLibsvmMachineObject* self, PyObject* args, PyObject* kwds) {
+
+  if (!self->cxx->supportsProbability()) {
+    PyErr_Format(PyExc_RuntimeError, "`%s' object does not support probabilities - in the future, use `o.probability' to query for this property", Py_TYPE(self)->tp_name);
+    return 0;
+  }
 
   static const char* const_kwlist[] = {"input", "cls", "prob", 0};
   static char** kwlist = const_cast<char**>(const_kwlist);
@@ -1052,8 +1070,8 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndProbabilities
       PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have 1 element, not %" PY_FORMAT_SIZE_T "d elements", cls->shape[0]);
       return 0;
     }
-    if (prob && prob->shape[0] != (Py_ssize_t)self->cxx->outputSize()) {
-      PyErr_Format(PyExc_RuntimeError, "1D `prob' array should have %" PY_FORMAT_SIZE_T "d elements matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, prob->shape[0]);
+    if (prob && prob->shape[0] != (Py_ssize_t)self->cxx->numberOfClasses()) {
+      PyErr_Format(PyExc_RuntimeError, "1D `prob' array should have %" PY_FORMAT_SIZE_T "d elements matching the number of classes of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->numberOfClasses(), Py_TYPE(self)->tp_name, prob->shape[0]);
       return 0;
     }
   }
@@ -1066,8 +1084,8 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndProbabilities
       PyErr_Format(PyExc_RuntimeError, "1D `cls' array should have %" PY_FORMAT_SIZE_T "d elements matching the number of rows on `input', not %" PY_FORMAT_SIZE_T "d rows", input->shape[0], cls->shape[0]);
       return 0;
     }
-    if (prob && prob->shape[1] != (Py_ssize_t)self->cxx->outputSize()) {
-      PyErr_Format(PyExc_RuntimeError, "2D `prob' array should have %" PY_FORMAT_SIZE_T "d columns matching the output size of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->outputSize(), Py_TYPE(self)->tp_name, prob->shape[1]);
+    if (prob && prob->shape[1] != (Py_ssize_t)self->cxx->numberOfClasses()) {
+      PyErr_Format(PyExc_RuntimeError, "2D `prob' array should have %" PY_FORMAT_SIZE_T "d columns matching the number of classes of `%s', not %" PY_FORMAT_SIZE_T "d elements", self->cxx->numberOfClasses(), Py_TYPE(self)->tp_name, prob->shape[1]);
       return 0;
     }
     if (prob && input->shape[0] != prob->shape[0]) {
@@ -1088,11 +1106,11 @@ static PyObject* PyBobLearnLibsvmMachine_predictClassAndProbabilities
   if (!prob) {
     Py_ssize_t osize[2];
     if (input->ndim == 1) {
-      osize[0] = self->cxx->outputSize();
+      osize[0] = self->cxx->numberOfClasses();
     }
     else {
       osize[0] = input->shape[0];
-      osize[1] = self->cxx->outputSize();
+      osize[1] = self->cxx->numberOfClasses();
     }
     prob = (PyBlitzArrayObject*)PyBlitzArray_SimpleNew(NPY_FLOAT64, input->ndim, osize);
     prob_ = make_safe(prob);
