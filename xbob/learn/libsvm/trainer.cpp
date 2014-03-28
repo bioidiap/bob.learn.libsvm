@@ -26,30 +26,24 @@ static void debug_libsvm(const char* s) {
 }
 
 bob::learn::libsvm::Trainer::Trainer(
-    bob::learn::libsvm::Machine::svm_t svm_type,
-    bob::learn::libsvm::Machine::kernel_t kernel_type,
-    int degree,
-    double gamma,
-    double coef0,
+    bob::learn::libsvm::machine_t machine_type,
+    bob::learn::libsvm::kernel_t kernel_type,
     double cache_size,
     double eps,
-    double C,
-    double nu,
-    double p,
     bool shrinking,
     bool probability
     )
 {
-  m_param.svm_type = svm_type;
+  m_param.svm_type = machine_type;
   m_param.kernel_type = kernel_type;
-  m_param.degree = degree;
-  m_param.gamma = gamma;
-  m_param.coef0 = coef0;
+  m_param.degree = 3;
+  m_param.gamma = 0.;
+  m_param.coef0 = 0.;
   m_param.cache_size = cache_size;
   m_param.eps = eps;
-  m_param.C = C;
-  m_param.nu = nu;
-  m_param.p = p;
+  m_param.C = 1;
+  m_param.nu = 0.5;
+  m_param.p = 0.1;
   m_param.shrinking = shrinking;
   m_param.probability = probability;
 
@@ -208,7 +202,7 @@ static void svm_model_free(svm_model*& m) {
 #endif
 }
 
-boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
+std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double, 2> >& data,
  const blitz::Array<double,1>& input_subtraction,
  const blitz::Array<double,1>& input_division) const {
@@ -259,8 +253,8 @@ boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::trai
   boost::shared_ptr<svm_model> new_model =
     bob::learn::libsvm::svm_unpickle(bob::learn::libsvm::svm_pickle(model));
 
-  boost::shared_ptr<bob::learn::libsvm::Machine> retval =
-    boost::make_shared<bob::learn::libsvm::Machine>(new_model);
+  std::unique_ptr<bob::learn::libsvm::Machine> retval
+    (new bob::learn::libsvm::Machine(new_model));
 
   //sets up the scaling parameters given as input
   retval->setInputSubtraction(input_subtraction);
@@ -269,7 +263,7 @@ boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::trai
   return retval;
 }
 
-boost::shared_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
+std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double,2> >& data) const {
   int n_features = data[0].extent(blitz::secondDim);
   blitz::Array<double,1> sub(n_features);

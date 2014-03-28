@@ -178,11 +178,11 @@ int bob::learn::libsvm::Machine::classLabel(size_t i) const {
 
 }
 
-bob::learn::libsvm::Machine::svm_t bob::learn::libsvm::Machine::machineType() const {
-  return (svm_t)svm_get_svm_type(m_model.get());
+bob::learn::libsvm::machine_t bob::learn::libsvm::Machine::machineType() const {
+  return (machine_t)svm_get_svm_type(m_model.get());
 }
 
-bob::learn::libsvm::Machine::kernel_t bob::learn::libsvm::Machine::kernelType() const {
+bob::learn::libsvm::kernel_t bob::learn::libsvm::Machine::kernelType() const {
   return (kernel_t)m_model->param.kernel_type;
 }
 

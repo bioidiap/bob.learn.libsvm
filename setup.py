@@ -74,7 +74,7 @@ class libsvm:
       libraries when searching.
     """
 
-    candidates = find_header('svm.h', subpaths=['libsvm'])
+    candidates = find_header('svm.h', subpaths=['', 'libsvm'])
 
     if not candidates:
       raise RuntimeError("could not find libsvm's `svm.h' - have you installed libsvm on this machine?")
@@ -195,13 +195,14 @@ setup(
         ),
       Extension("xbob.learn.libsvm._library",
         [
-          "xbob/learn/libsvm/pytrainer.cpp",
-          "xbob/learn/libsvm/pyfile.cpp",
-          "xbob/learn/libsvm/pymachine.cpp",
-          "xbob/learn/libsvm/main.cpp",
           "xbob/learn/libsvm/file.cpp",
           "xbob/learn/libsvm/machine.cpp",
           "xbob/learn/libsvm/trainer.cpp",
+          "xbob/learn/libsvm/pyutils.cpp",
+          "xbob/learn/libsvm/pyfile.cpp",
+          "xbob/learn/libsvm/pymachine.cpp",
+          "xbob/learn/libsvm/pytrainer.cpp",
+          "xbob/learn/libsvm/main.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,

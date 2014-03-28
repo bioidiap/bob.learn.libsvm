@@ -93,6 +93,8 @@ static PyObject* create_module (void) {
 
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_Check_NUM] = (void *)&PyBobLearnLibsvmMachine_Check;
 
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvmMachine_NewFromMachine_NUM] = (void *)&PyBobLearnLibsvmMachine_NewFromMachine;
+
   /******************************************
    * Bindings for xbob.learn.libsvm.Trainer *
    ******************************************/
@@ -100,6 +102,22 @@ static PyObject* create_module (void) {
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Type_NUM] = (void *)&PyBobLearnLibsvmTrainer_Type;
 
   PyXbobLearnLibsvm_API[PyBobLearnLibsvmTrainer_Check_NUM] = (void *)&PyBobLearnLibsvmTrainer_Check;
+
+  /*********************************
+   * Bindings to general utilities *
+   *********************************/
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_MachineTypeAsString_NUM] = (void *)&PyBobLearnLibsvm_MachineTypeAsString;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_StringAsMachineType_NUM] = (void *)&PyBobLearnLibsvm_StringAsMachineType;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_CStringAsMachineType_NUM] = (void *)&PyBobLearnLibsvm_CStringAsMachineType;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_KernelTypeAsString_NUM] = (void *)&PyBobLearnLibsvm_KernelTypeAsString;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_StringAsKernelType_NUM] = (void *)&PyBobLearnLibsvm_StringAsKernelType;
+
+  PyXbobLearnLibsvm_API[PyBobLearnLibsvm_CStringAsKernelType_NUM] = (void *)&PyBobLearnLibsvm_CStringAsKernelType;
 
 #if PY_VERSION_HEX >= 0x02070000
 

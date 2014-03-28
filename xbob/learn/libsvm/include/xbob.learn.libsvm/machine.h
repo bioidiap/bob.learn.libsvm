@@ -44,6 +44,22 @@ struct svm_model {
 
 namespace bob { namespace learn { namespace libsvm {
 
+  enum machine_t {
+    C_SVC,
+    NU_SVC,
+    ONE_CLASS,
+    EPSILON_SVR,
+    NU_SVR
+  }; /* the machine type */
+
+  enum kernel_t {
+    LINEAR,
+    POLY,
+    RBF,
+    SIGMOID,
+    PRECOMPUTED
+  }; /* kernel type used on the machine */
+
   /**
    * Here is the problem: libsvm does not provide a simple way to extract the
    * information from the SVM structure. There are lots of cases and allocation
@@ -65,22 +81,6 @@ namespace bob { namespace learn { namespace libsvm {
   class Machine {
 
     public: //api
-
-      enum svm_t {
-        C_SVC,
-        NU_SVC,
-        ONE_CLASS,
-        EPSILON_SVR,
-        NU_SVR
-      }; /* svm_type */
-
-      enum kernel_t {
-        LINEAR,
-        POLY,
-        RBF,
-        SIGMOID,
-        PRECOMPUTED
-      }; /* kernel_type */
 
       /**
        * Builds a new Support Vector Machine from a libsvm model file
@@ -144,7 +144,7 @@ namespace bob { namespace learn { namespace libsvm {
       /**
        * SVM type
        */
-      svm_t machineType() const;
+      machine_t machineType() const;
 
       /**
        * Kernel type

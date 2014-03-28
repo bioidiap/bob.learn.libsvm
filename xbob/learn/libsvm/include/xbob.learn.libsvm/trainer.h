@@ -11,6 +11,7 @@
 #define BOB_LEARN_LIBSVM_TRAINER_H
 
 #include <vector>
+#include <memory>
 #include "machine.h"
 
 namespace bob { namespace learn { namespace libsvm {
@@ -34,16 +35,10 @@ namespace bob { namespace learn { namespace libsvm {
        * command line application svm-train.
        */
       Trainer(
-          bob::learn::libsvm::Machine::svm_t svm_type=bob::learn::libsvm::Machine::C_SVC,
-          bob::learn::libsvm::Machine::kernel_t kernel_type=bob::learn::libsvm::Machine::RBF,
-          int degree=3, //for poly
-          double gamma=0., //for poly/rbf/sigmoid
-          double coef0=0., //for poly/sigmoid
+          machine_t machine_type=C_SVC,
+          kernel_t kernel_type=RBF,
           double cache_size=100, //in MB
           double eps=1.e-3, //stopping criteria epsilon
-          double C=1., //for C_SVC, EPSILON_SVR and NU_SVR
-          double nu=0.5, //for NU_SVC, ONE_CLASS and NU_SVR
-          double p=0.1, //for EPSILON_SVR, this is the "epsilon" value there
           bool shrinking=true, //use the shrinking heuristics
           bool probability=false //do probability estimates
           );
@@ -61,14 +56,14 @@ namespace bob { namespace learn { namespace libsvm {
        * from 1 (i.e., 1, 2, 3, 4, etc.). If what you want is regression, the
        * size of the input data array should be 1.
        */
-      boost::shared_ptr<bob::learn::libsvm::Machine> train
+      std::unique_ptr<bob::learn::libsvm::Machine> train
         (const std::vector<blitz::Array<double,2> >& data) const;
 
       /**
        * This version accepts scaling parameters that will be applied
        * column-wise to the input data.
        */
-      boost::shared_ptr<bob::learn::libsvm::Machine> train
+      std::unique_ptr<bob::learn::libsvm::Machine> train
         (const std::vector<blitz::Array<double,2> >& data,
          const blitz::Array<double,1>& input_subtract,
          const blitz::Array<double,1>& input_division) const;
@@ -76,11 +71,11 @@ namespace bob { namespace learn { namespace libsvm {
       /**
        * Getters and setters for all parameters
        */
-      bob::learn::libsvm::Machine::svm_t getSvmType() const { return (bob::learn::libsvm::Machine::svm_t)m_param.svm_type; }
-      void setSvmType(bob::learn::libsvm::Machine::svm_t v) { m_param.svm_type = v; }
+      machine_t getMachineType() const { return (machine_t)m_param.svm_type; }
+      void setMachineType(machine_t v) { m_param.svm_type = v; }
 
-      bob::learn::libsvm::Machine::kernel_t getKernelType() const { return (bob::learn::libsvm::Machine::kernel_t)m_param.kernel_type; }
-      void setKernelType(bob::learn::libsvm::Machine::kernel_t v) { m_param.kernel_type = v; }
+      kernel_t getKernelType() const { return (kernel_t)m_param.kernel_type; }
+      void setKernelType(kernel_t v) { m_param.kernel_type = v; }
 
       int getDegree() const { return m_param.degree; }
       void setDegree(int v) { m_param.degree = v; }
