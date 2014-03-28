@@ -224,7 +224,7 @@ PyObject* PyBobLearnLibsvmFile_reset(PyBobLearnLibsvmFileObject* self) {
 
 PyDoc_STRVAR(s_good_str, "good");
 PyDoc_STRVAR(s_good_doc,
-"o.good() -> None\n\
+"o.good() -> bool\n\
 \n\
 Returns if the file is in a good state for readout.\n\
 It is ``True`` if the current file it has neither the\n\
@@ -249,7 +249,7 @@ PyObject* PyBobLearnLibsvmFile_good(PyBobLearnLibsvmFileObject* self) {
 
 PyDoc_STRVAR(s_fail_str, "fail");
 PyDoc_STRVAR(s_fail_doc,
-"o.fail() -> None\n\
+"o.fail() -> bool\n\
 \n\
 Returns ``True`` if the file has a ``fail`` condition or\n\
 ``bad`` bit sets. It means the read operation has found a\n\
@@ -276,7 +276,7 @@ PyObject* PyBobLearnLibsvmFile_fail(PyBobLearnLibsvmFileObject* self) {
 
 PyDoc_STRVAR(s_eof_str, "eof");
 PyDoc_STRVAR(s_eof_doc,
-"o.eof() -> None\n\
+"o.eof() -> bool\n\
 \n\
 Returns ``True`` if the file has reached its end. To start\n\
 reading from the file again, you must call :py:meth:`File.reset`\n\

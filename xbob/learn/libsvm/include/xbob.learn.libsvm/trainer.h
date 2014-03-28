@@ -86,7 +86,7 @@ namespace bob { namespace learn { namespace libsvm {
       double getCoef0() const { return m_param.coef0; }
       void setCoef0(double v) { m_param.coef0 = v; }
 
-      double getCacheSizeInMB() const { return m_param.cache_size; }
+      double getCacheSizeInMb() const { return m_param.cache_size; }
       void setCacheSizeInMb(double v) { m_param.cache_size = v; }
 
       double getStopEpsilon() const { return m_param.eps; }

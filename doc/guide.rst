@@ -4,6 +4,24 @@
 ..
 .. Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
 
+.. testsetup::
+
+  import os
+  import numpy
+  import xbob.learn.libsvm
+
+  def F(m, f):
+    from pkg_resources import resource_filename
+    return resource_filename(m, os.path.join('data', f))
+
+  heart_model = F('xbob.learn.libsvm', 'heart.svmmodel')
+
+  svm = xbob.learn.libsvm.Machine(heart_model)
+
+  heart_data = F('xbob.learn.libsvm', 'heart.svmdata')
+
+  f = xbob.learn.libsvm.File(heart_data)
+
 ======================================
  Support Vector Machines and Trainers
 ======================================
@@ -43,28 +61,14 @@ using the application ``svm-train`` with default parameters). The ``shape``
 attribute, indicates how many features a machine from this module can input and
 how many it outputs (typically, just 1):
 
-.. testsetup:: machine
-
-  import os
-  import xbob.learn.libsvm
-  import numpy
-
-  def F(m, f):
-    from pkg_resources import resource_filename
-    return resource_filename(m, os.path.join('data', f))
-
-  heart_model = F('xbob.learn.libsvm', 'heart.svmmodel')
-
-  svm = xbob.learn.libsvm.Machine(heart_model)
-
-.. doctest:: machine
+.. doctest::
 
   >>> svm.shape
   (13, 1)
 
 To run a single example through the SVM, just use the ``()`` operator:
 
-.. doctest:: machine
+.. doctest::
 
   >> svm(numpy.ones((13,), 'float64'))
   1
@@ -81,25 +85,7 @@ Below is a quick example: Suppose the variable ``f`` contains an object of
 type :py:class:`xbob.learn.libsvm.File`. Then, you could read data (and labels)
 from the file like this:
 
-.. testsetup:: file
-
-  import os
-  import numpy
-  import xbob.learn.libsvm
-
-  def F(m, f):
-    from pkg_resources import resource_filename
-    return resource_filename('%s.test' % m, os.path.join('data', f))
-
-  heart_data = F('xbob.learn.libsvm', 'heart.svmdata')
-
-  f = xbob.learn.libsvm.File(heart_data)
-
-  heart_model = F('machine', 'heart.svmmodel')
-
-  svm = xbob.learn.libsvm.Machine(heart_model)
-
-.. doctest:: file
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
    >>> labels, data = f.read_all()
@@ -108,7 +94,7 @@ from the file like this:
 Then you can throw the data into the ``svm`` machine you trained earlier like
 this:
 
-.. doctest:: file
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
    >>> predicted_labels = svm(data)
@@ -122,7 +108,7 @@ training samples for the given class and the second dimension is the
 dimensionality of the feature. For instance, let's consider the following
 training set for a two class problem:
 
-.. doctest:: trainer
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
    >>> pos = numpy.array([[1,-1,1], [0.5,-0.5,0.5], [0.75,-0.75,0.8]], 'float64')
@@ -140,7 +126,7 @@ training set for a two class problem:
 Then, an SVM [1]_ can be trained easily using the
 :py:class:`xbob.learn.libsvm.Trainer` class.
 
-.. doctest:: trainer
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
    >>> trainer = xbob.learn.libsvm.Trainer()
@@ -149,22 +135,22 @@ Then, an SVM [1]_ can be trained easily using the
 This returns a :py:class:`xbob.learn.libsvm.Machine` which can later be used
 for classification, as explained before.
 
-.. doctest:: trainer
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
    >>> predicted_label = machine(numpy.array([1.,-1.,1.]))
    >>> print(predicted_label)
-   1
+   [1]
 
 The `training` procedure allows setting several different options. For
 instance, the default `kernel` is an `RBF`. If we would like a `linear SVM`
 instead, this can be set before calling the
 :py:meth:`xbob.learn.libsvm.Trainer.train` method.
 
-.. doctest:: trainer
+.. doctest::
    :options: +NORMALIZE_WHITESPACE
 
-   >>> trainer.kernel_type = xbob.learn.libsvm.svm_kernel_type.LINEAR
+   >>> trainer.kernel_type = 'LINEAR'
 
 
 Acknowledgements

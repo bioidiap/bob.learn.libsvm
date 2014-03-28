@@ -43,6 +43,60 @@ def test_initialization():
   # all defaults
   trainer = Trainer()
 
+  # check defaults are right
+  nose.tools.eq_(trainer.machine_type, 'C_SVC')
+  nose.tools.eq_(trainer.kernel_type, 'RBF')
+  nose.tools.eq_(trainer.cache_size, 100.)
+  nose.tools.eq_(trainer.stop_epsilon, 1e-3)
+  assert trainer.shrinking
+  assert not trainer.probability
+
+def test_get_and_set():
+
+  trainer = Trainer()
+
+  # now tries setting the various properties
+  trainer.machine_type = 'NU_SVC'
+  nose.tools.eq_(trainer.machine_type, 'NU_SVC')
+  trainer.kernel_type = 'LINEAR'
+  nose.tools.eq_(trainer.kernel_type, 'LINEAR')
+  trainer.cache_size = 2
+  nose.tools.eq_(trainer.cache_size, 2)
+  trainer.coef0 = 2
+  nose.tools.eq_(trainer.coef0, 2)
+  trainer.cost = 2
+  nose.tools.eq_(trainer.cost, 2)
+  trainer.degree = 2
+  nose.tools.eq_(trainer.degree, 2)
+  trainer.gamma = 2
+  nose.tools.eq_(trainer.gamma, 2)
+  trainer.nu = 2
+  nose.tools.eq_(trainer.nu, 2)
+  trainer.stop_epsilon = 2
+  nose.tools.eq_(trainer.stop_epsilon, 2)
+  trainer.shrinking = False
+  nose.tools.eq_(trainer.shrinking, False)
+  trainer.probability = True
+  nose.tools.eq_(trainer.probability, True)
+
+@nose.tools.raises(ValueError)
+def test_set_machine_raises():
+
+  trainer = Trainer()
+  trainer.machine_type = 'wrong'
+
+@nose.tools.raises(ValueError)
+def test_set_kernel_raises():
+
+  trainer = Trainer()
+  trainer.kernel_type = 'wrong'
+
+@nose.tools.raises(TypeError)
+def test_cannot_delete():
+
+  trainer = Trainer()
+  del trainer.kernel_type
+
 def test_training():
 
   # For this example I'm using an SVM file because of convinience. You only

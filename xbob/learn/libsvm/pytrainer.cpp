@@ -21,7 +21,7 @@
 PyDoc_STRVAR(s_svm_str, XBOB_EXT_MODULE_PREFIX ".Trainer");
 
 PyDoc_STRVAR(s_svm_doc,
-"Trainer([machine_type='C_SVC', [kernel_type='RBF', [cache_size=100, [eps=1e-3, [shrinking=True, [probability=False]]]]]]) -> new Trainer\n\
+"Trainer([machine_type='C_SVC', [kernel_type='RBF', [cache_size=100, [stop_epsilon=1e-3, [shrinking=True, [probability=False]]]]]]) -> new Trainer\n\
 \n\
 This class emulates the behavior of the command line utility\n\
 called ``svm-train``, from LIBSVM. It allows you to create a\n\
@@ -31,31 +31,31 @@ global to all machine and kernel types. Specific parameters\n\
 for specific machines or kernel types can be fine-tuned using\n\
 object attributes (see help documentation).\n\
 \n\
-**Parameters**\n\
+Parameters:\n\
 \n\
- machine_type, str\n\
-   The type of SVM to be trained. Valid options are:\n\
-   \n\
-   * ``'C_SVC'`` (the default)\n\
-   * ``'NU_SVC'``\n\
-   * ``'ONE_CLASS'`` (**unsupported**)\n\
-   * ``'EPSILON_SVR'`` (**unsupported** regression)\n\
-   * ``'NU_SVR'`` (**unsupported** regression)\n\
+machine_type, str\n\
+  The type of SVM to be trained. Valid options are:\n\
+  \n\
+  * ``'C_SVC'`` (the default)\n\
+  * ``'NU_SVC'``\n\
+  * ``'ONE_CLASS'`` (**unsupported**)\n\
+  * ``'EPSILON_SVR'`` (**unsupported** regression)\n\
+  * ``'NU_SVR'`` (**unsupported** regression)\n\
 \n\
 kernel_type, str\n\
   The type of kernel to deploy on this machine. Valid options are:\n\
   \n\
-  *  ``'LINEAR'``, for a linear kernel\n\
-  *  ``'POLY'``, for a polynomial kernel\n\
-  *  ``'RBF'``, for a radial-basis function kernel\n\
-  *  ``'SIGMOID'``, for a sigmoidal kernel\n\
-  *  ``'PRECOMPUTED'``, for a precomputed, user provided kernel\n\
+  * ``'LINEAR'``, for a linear kernel\n\
+  * ``'POLY'``, for a polynomial kernel\n\
+  * ``'RBF'``, for a radial-basis function kernel\n\
+  * ``'SIGMOID'``, for a sigmoidal kernel\n\
+  * ``'PRECOMPUTED'``, for a precomputed, user provided kernel\n\
     please note this option is currently **unsupported**.\n\
 \n\
 cache_size, float\n\
   The size of LIBSVM's internal cache, in megabytes\n\
 \n\
-eps, float\n\
+stop_epsilon, float\n\
   The epsilon value for the training stopping criterion\n\
 \n\
 shrinking, bool\n\
@@ -92,7 +92,7 @@ static int PyBobLearnLibsvmTrainer_init
     "machine_type",
     "kernel_type",
     "cache_size",
-    "eps",
+    "stop_epsilon",
     "shrinking",
     "probability",
     0,
@@ -102,12 +102,12 @@ static int PyBobLearnLibsvmTrainer_init
   const char* machine_type = "C_SVC";
   const char* kernel_type = "RBF";
   double cache_size= 100;
-  double eps = 1e-3;
+  double stop_epsilon = 1e-3;
   PyObject* shrinking = Py_True; ///< borrowed
   PyObject* probability = Py_False; ///< borrowed
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|ssddOO", kwlist,
-        &machine_type, &kernel_type, &cache_size, &eps, &shrinking, &probability))
+        &machine_type, &kernel_type, &cache_size, &stop_epsilon, &shrinking, &probability))
     return -1;
 
   bob::learn::libsvm::machine_t c_machine_type =
@@ -121,7 +121,7 @@ static int PyBobLearnLibsvmTrainer_init
 
   try {
     self->cxx = new bob::learn::libsvm::Trainer(c_machine_type, c_kernel_type,
-        cache_size, eps, c_shrinking, c_probability);
+        cache_size, stop_epsilon, c_shrinking, c_probability);
   }
   catch (std::exception& ex) {
     PyErr_SetString(PyExc_RuntimeError, ex.what());
@@ -156,12 +156,16 @@ static PyObject* PyBobLearnLibsvmTrainer_getMachineType
   return PyBobLearnLibsvm_MachineTypeAsString(self->cxx->getMachineType());
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setMachineType
+static int PyBobLearnLibsvmTrainer_setMachineType
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   auto m = PyBobLearnLibsvm_StringAsMachineType(o);
-  if (PyErr_Occurred()) return 0;
+  if (PyErr_Occurred()) return -1;
   self->cxx->setMachineType(m);
-  Py_RETURN_NONE;
+  return 0;
 }
 
 PyDoc_STRVAR(s_svm_kernel_type_str, "kernel_type");
@@ -173,17 +177,21 @@ static PyObject* PyBobLearnLibsvmTrainer_getKernelType
   return PyBobLearnLibsvm_KernelTypeAsString(self->cxx->getKernelType());
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setKernelType
+static int PyBobLearnLibsvmTrainer_setKernelType
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   auto m = PyBobLearnLibsvm_StringAsKernelType(o);
-  if (PyErr_Occurred()) return 0;
+  if (PyErr_Occurred()) return -1;
   self->cxx->setKernelType(m);
-  Py_RETURN_NONE;
+  return 0;
 }
 
 PyDoc_STRVAR(s_degree_str, "degree");
 PyDoc_STRVAR(s_degree_doc,
-"The polinomial degree, only valid if the kernel is ``'POLY'``\n\
+"The polinomial degree, only used if the kernel is ``'POLY'``\n\
 (polynomial)");
 
 static PyObject* PyBobLearnLibsvmTrainer_getDegree
@@ -191,11 +199,15 @@ static PyObject* PyBobLearnLibsvmTrainer_getDegree
   return Py_BuildValue("i", self->cxx->getDegree());
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setDegree
+static int PyBobLearnLibsvmTrainer_setDegree
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   self->cxx->setDegree(PyNumber_AsSsize_t(o, PyExc_OverflowError));
-  if (PyErr_Occurred()) return 0;
-  Py_RETURN_NONE;
+  if (PyErr_Occurred()) return -1;
+  return 0;
 }
 
 PyDoc_STRVAR(s_gamma_str, "gamma");
@@ -208,11 +220,15 @@ static PyObject* PyBobLearnLibsvmTrainer_getGamma
   return Py_BuildValue("d", self->cxx->getGamma());
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setGamma
+static int PyBobLearnLibsvmTrainer_setGamma
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   self->cxx->setGamma(PyFloat_AsDouble(o));
-  if (PyErr_Occurred()) return 0;
-  Py_RETURN_NONE;
+  if (PyErr_Occurred()) return -1;
+  return 0;
 }
 
 PyDoc_STRVAR(s_coef0_str, "coef0");
@@ -225,11 +241,116 @@ static PyObject* PyBobLearnLibsvmTrainer_getCoef0
   return Py_BuildValue("d", self->cxx->getCoef0());
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setCoef0
+static int PyBobLearnLibsvmTrainer_setCoef0
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   self->cxx->setCoef0(PyFloat_AsDouble(o));
-  if (PyErr_Occurred()) return 0;
-  Py_RETURN_NONE;
+  if (PyErr_Occurred()) return -1;
+  return 0;
+}
+
+PyDoc_STRVAR(s_cache_size_str, "cache_size");
+PyDoc_STRVAR(s_cache_size_doc,
+"Internal cache size to be used by LIBSVM (in megabytes)");
+
+static PyObject* PyBobLearnLibsvmTrainer_getCacheSize
+(PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->getCacheSizeInMb());
+}
+
+static int PyBobLearnLibsvmTrainer_setCacheSize
+(PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
+  self->cxx->setCacheSizeInMb(PyFloat_AsDouble(o));
+  if (PyErr_Occurred()) return -1;
+  return 0;
+}
+
+PyDoc_STRVAR(s_stop_epsilon_str, "stop_epsilon");
+PyDoc_STRVAR(s_stop_epsilon_doc,
+"The epsilon used for stop training");
+
+static PyObject* PyBobLearnLibsvmTrainer_getStopEpsilon
+(PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->getStopEpsilon());
+}
+
+static int PyBobLearnLibsvmTrainer_setStopEpsilon
+(PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
+  self->cxx->setStopEpsilon(PyFloat_AsDouble(o));
+  if (PyErr_Occurred()) return -1;
+  return 0;
+}
+
+PyDoc_STRVAR(s_cost_str, "cost");
+PyDoc_STRVAR(s_cost_doc,
+"The cost value for ``C_SVC``, ``EPSILON_SVR`` or ``NU_SVR``");
+
+static PyObject* PyBobLearnLibsvmTrainer_getCost
+(PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->getCost());
+}
+
+static int PyBobLearnLibsvmTrainer_setCost
+(PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
+  self->cxx->setCost(PyFloat_AsDouble(o));
+  if (PyErr_Occurred()) return -1;
+  return 0;
+}
+
+PyDoc_STRVAR(s_nu_str, "nu");
+PyDoc_STRVAR(s_nu_doc,
+"The nu value for ``NU_SVC``, ``ONE_CLASS`` or ``NU_SVR``");
+
+static PyObject* PyBobLearnLibsvmTrainer_getNu
+(PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->getNu());
+}
+
+static int PyBobLearnLibsvmTrainer_setNu
+(PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
+  self->cxx->setNu(PyFloat_AsDouble(o));
+  if (PyErr_Occurred()) return -1;
+  return 0;
+}
+
+PyDoc_STRVAR(s_loss_epsilon_svr_str, "loss_epsilon_svr");
+PyDoc_STRVAR(s_loss_epsilon_svr_doc,
+"For ``EPSILON_SVR``, this is the :math:`\\epsilon` value\n\
+on the equation");
+
+static PyObject* PyBobLearnLibsvmTrainer_getLossEpsilonSVR
+(PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
+  return Py_BuildValue("d", self->cxx->getLossEpsilonSVR());
+}
+
+static int PyBobLearnLibsvmTrainer_setLossEpsilonSVR
+(PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
+  self->cxx->setLossEpsilonSVR(PyFloat_AsDouble(o));
+  if (PyErr_Occurred()) return -1;
+  return 0;
 }
 
 PyDoc_STRVAR(s_probability_str, "probability");
@@ -243,11 +364,15 @@ static PyObject* PyBobLearnLibsvmTrainer_getSupportsProbability
   Py_RETURN_FALSE;
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setSupportsProbability
+static int PyBobLearnLibsvmTrainer_setSupportsProbability
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   if (PyObject_IsTrue(o)) self->cxx->setProbabilityEstimates(true);
   else self->cxx->setProbabilityEstimates(false);
-  Py_RETURN_NONE;
+  return 0;
 }
 
 PyDoc_STRVAR(s_shrinking_str, "shrinking");
@@ -260,11 +385,15 @@ static PyObject* PyBobLearnLibsvmTrainer_getShrinking
   Py_RETURN_FALSE;
 }
 
-static PyObject* PyBobLearnLibsvmTrainer_setShrinking
+static int PyBobLearnLibsvmTrainer_setShrinking
 (PyBobLearnLibsvmTrainerObject* self, PyObject* o, void* /*closure*/) {
+  if (!o) {
+    PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
+    return -1;
+  }
   if (PyObject_IsTrue(o)) self->cxx->setUseShrinking(true);
   else self->cxx->setUseShrinking(false);
-  Py_RETURN_NONE;
+  return 0;
 }
 
 static PyGetSetDef PyBobLearnLibsvmTrainer_getseters[] = {
@@ -301,6 +430,41 @@ static PyGetSetDef PyBobLearnLibsvmTrainer_getseters[] = {
       (getter)PyBobLearnLibsvmTrainer_getCoef0,
       (setter)PyBobLearnLibsvmTrainer_setCoef0,
       s_coef0_doc,
+      0
+    },
+    {
+      s_cache_size_str,
+      (getter)PyBobLearnLibsvmTrainer_getCacheSize,
+      (setter)PyBobLearnLibsvmTrainer_setCacheSize,
+      s_cache_size_doc,
+      0
+    },
+    {
+      s_stop_epsilon_str,
+      (getter)PyBobLearnLibsvmTrainer_getStopEpsilon,
+      (setter)PyBobLearnLibsvmTrainer_setStopEpsilon,
+      s_stop_epsilon_doc,
+      0
+    },
+    {
+      s_cost_str,
+      (getter)PyBobLearnLibsvmTrainer_getCost,
+      (setter)PyBobLearnLibsvmTrainer_setCost,
+      s_cost_doc,
+      0
+    },
+    {
+      s_nu_str,
+      (getter)PyBobLearnLibsvmTrainer_getNu,
+      (setter)PyBobLearnLibsvmTrainer_setNu,
+      s_nu_doc,
+      0
+    },
+    {
+      s_loss_epsilon_svr_str,
+      (getter)PyBobLearnLibsvmTrainer_getLossEpsilonSVR,
+      (setter)PyBobLearnLibsvmTrainer_setLossEpsilonSVR,
+      s_loss_epsilon_svr_doc,
       0
     },
     {
