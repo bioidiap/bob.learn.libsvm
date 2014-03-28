@@ -15,7 +15,7 @@ import pkg_resources
 import nose.tools
 import xbob.io
 
-from xbob.learn.libsvm import File, Machine, svm_kernel_type, svm_type
+from . import File, Machine
 
 def F(f):
   """Returns the test file on the "data" subdirectory"""
@@ -73,7 +73,7 @@ def test_can_load():
   machine = Machine(HEART_MACHINE)
   nose.tools.eq_(machine.shape, (13,1))
   nose.tools.eq_(machine.kernel_type, 'RBF')
-  nose.tools.eq_(machine.svm_type, 'C_SVC')
+  nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
@@ -90,7 +90,7 @@ def test_can_save():
   machine = Machine(tmp)
   nose.tools.eq_(machine.shape, (13,1))
   nose.tools.eq_(machine.kernel_type, 'RBF')
-  nose.tools.eq_(machine.svm_type, 'C_SVC')
+  nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
@@ -109,7 +109,7 @@ def test_can_save_hdf5():
   machine = Machine(xbob.io.HDF5File(tmp))
   nose.tools.eq_(machine.shape, (13,1))
   nose.tools.eq_(machine.kernel_type, 'RBF')
-  nose.tools.eq_(machine.svm_type, 'C_SVC')
+  nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
   assert -1 in machine.labels
   assert +1 in machine.labels
