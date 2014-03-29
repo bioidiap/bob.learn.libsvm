@@ -17,12 +17,9 @@ import nose.tools
 
 from . import File, Machine, Trainer
 
-def F(f, module=None):
+def F(f):
   """Returns the test file on the "data" subdirectory"""
-  if module is None:
-    return pkg_resources.resource_filename(__name__, os.path.join('data', f))
-  return pkg_resources.resource_filename('bob.%s.test' % module,
-      os.path.join('data', f))
+  return pkg_resources.resource_filename(__name__, os.path.join('data', f))
 
 def tempname(suffix, prefix='bobtest_'):
   (fd, name) = tempfile.mkstemp(suffix, prefix)
@@ -30,11 +27,11 @@ def tempname(suffix, prefix='bobtest_'):
   os.unlink(name)
   return name
 
-TEST_MACHINE_NO_PROBS = F('heart_no_probs.svmmodel', 'machine')
+TEST_MACHINE_NO_PROBS = F('heart_no_probs.svmmodel')
 
-HEART_DATA = F('heart.svmdata', 'machine') #13 inputs
-HEART_MACHINE = F('heart.svmmodel', 'machine') #supports probabilities
-HEART_EXPECTED = F('heart.out', 'machine') #expected probabilities
+HEART_DATA = F('heart.svmdata') #13 inputs
+HEART_MACHINE = F('heart.svmmodel') #supports probabilities
+HEART_EXPECTED = F('heart.out') #expected probabilities
 
 def test_initialization():
 
