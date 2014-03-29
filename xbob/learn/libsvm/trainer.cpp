@@ -202,7 +202,7 @@ static void svm_model_free(svm_model*& m) {
 #endif
 }
 
-std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
+bob::learn::libsvm::Machine* bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double, 2> >& data,
  const blitz::Array<double,1>& input_subtraction,
  const blitz::Array<double,1>& input_division) const {
@@ -253,8 +253,7 @@ std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
   boost::shared_ptr<svm_model> new_model =
     bob::learn::libsvm::svm_unpickle(bob::learn::libsvm::svm_pickle(model));
 
-  std::unique_ptr<bob::learn::libsvm::Machine> retval
-    (new bob::learn::libsvm::Machine(new_model));
+  auto retval = new bob::learn::libsvm::Machine(new_model);
 
   //sets up the scaling parameters given as input
   retval->setInputSubtraction(input_subtraction);
@@ -263,7 +262,7 @@ std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
   return retval;
 }
 
-std::unique_ptr<bob::learn::libsvm::Machine> bob::learn::libsvm::Trainer::train
+bob::learn::libsvm::Machine* bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double,2> >& data) const {
   int n_features = data[0].extent(blitz::secondDim);
   blitz::Array<double,1> sub(n_features);

@@ -649,17 +649,17 @@ static PyObject* PyBobLearnLibsvmTrainer_train
 
   /** all basic checks are done, can call the machine now **/
   try {
+    bob::learn::libsvm::Machine* machine;
     if (subtract && divide) {
-      auto machine = self->cxx->train(Xseq,
+      machine = self->cxx->train(Xseq,
           *PyBlitzArrayCxx_AsBlitz<double,1>(subtract),
           *PyBlitzArrayCxx_AsBlitz<double,1>(divide)
           );
-      return PyBobLearnLibsvmMachine_NewFromMachine(machine.release());
     }
     else {
-      auto machine = self->cxx->train(Xseq);
-      return PyBobLearnLibsvmMachine_NewFromMachine(machine.release());
+      machine = self->cxx->train(Xseq);
     }
+    return PyBobLearnLibsvmMachine_NewFromMachine(machine);
   }
   catch (std::exception& e) {
     PyErr_SetString(PyExc_RuntimeError, e.what());

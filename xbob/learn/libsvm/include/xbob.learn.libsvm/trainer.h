@@ -11,7 +11,6 @@
 #define BOB_LEARN_LIBSVM_TRAINER_H
 
 #include <vector>
-#include <memory>
 #include "machine.h"
 
 namespace bob { namespace learn { namespace libsvm {
@@ -55,15 +54,17 @@ namespace bob { namespace learn { namespace libsvm {
        * the number of classes is greater than 2, labels are picked starting
        * from 1 (i.e., 1, 2, 3, 4, etc.). If what you want is regression, the
        * size of the input data array should be 1.
+       *
+       * Returns a new object you must deallocate yourself.
        */
-      std::unique_ptr<bob::learn::libsvm::Machine> train
+      bob::learn::libsvm::Machine* train
         (const std::vector<blitz::Array<double,2> >& data) const;
 
       /**
        * This version accepts scaling parameters that will be applied
        * column-wise to the input data.
        */
-      std::unique_ptr<bob::learn::libsvm::Machine> train
+      bob::learn::libsvm::Machine* train
         (const std::vector<blitz::Array<double,2> >& data,
          const blitz::Array<double,1>& input_subtract,
          const blitz::Array<double,1>& input_division) const;
