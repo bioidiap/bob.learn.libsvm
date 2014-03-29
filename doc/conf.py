@@ -31,6 +31,8 @@ extensions = [
   'sphinx.ext.autosummary',
   'sphinx.ext.doctest',
   'sphinx.ext.intersphinx',
+  'breathe',
+  'sphinxcontrib.restbuilder',
   ]
 
 # The viewcode extension appeared only on Sphinx >= 1.0.0
@@ -280,6 +282,11 @@ intersphinx_mapping = {
   'http://docs.python.org/%d.%d/' % sys.version_info[:2]: None,
   numpy_manual: None,
   }
+
+# For Breathe
+breathe_projects = {
+    'cxx': 'doc/xml',
+    }
 
 def setup(app):
   pass
