@@ -74,7 +74,7 @@ class libsvm:
       libraries when searching.
     """
 
-    candidates = find_header('svm.h', subpaths=['', 'libsvm'])
+    candidates = find_header('svm.h', subpaths=['', 'libsvm', 'libsvm-*/libsvm'])
 
     if not candidates:
       raise RuntimeError("could not find libsvm's `svm.h' - have you installed libsvm on this machine?")
