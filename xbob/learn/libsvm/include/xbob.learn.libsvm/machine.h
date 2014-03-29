@@ -18,6 +18,7 @@
 #include <svm.h>
 #include <bob/io/HDF5File.h>
 
+// @cond SKIPDOXYGEN
 // We need to declare the svm_model type for libsvm < 3.0.0. The next bit of
 // code was cut and pasted from version 2.9.1 of libsvm, file svm.cpp.
 #if LIBSVM_VERSION < 300
@@ -41,6 +42,7 @@ struct svm_model {
                /* 0 if svm_model is created by svm_train */
 };
 #endif
+// @endcond
 
 namespace bob { namespace learn { namespace libsvm {
 
