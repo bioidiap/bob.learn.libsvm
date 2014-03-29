@@ -31,8 +31,6 @@ extensions = [
   'sphinx.ext.autosummary',
   'sphinx.ext.doctest',
   'sphinx.ext.intersphinx',
-  'breathe',
-  'sphinxcontrib.restbuilder',
   ]
 
 # The viewcode extension appeared only on Sphinx >= 1.0.0
