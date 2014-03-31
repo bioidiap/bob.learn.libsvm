@@ -555,8 +555,10 @@ PyDoc_STRVAR(s_train_doc,
 \n\
 Trains a new machine for multi-class classification. If the\n\
 number of classes in data is 2, then the assigned labels will\n\
-be -1 and +1. If the number of classes is greater than 2, labels\n\
-are picked starting from 1 (i.e., 1, 2, 3, 4, etc.).\n\
+be +1 and -1, **in that order**. If the number of classes is\n\
+greater than 2, labels are picked starting from 1 (i.e., 1,\n\
+2, 3, 4, etc.). This convention follows what is done at the\n\
+command-line for LIBSVM.\n\
 \n\
 The input object ``data`` must be an iterable object (such\n\
 as a Python list or tuple) containing 2D 64-bit float arrays\n\
