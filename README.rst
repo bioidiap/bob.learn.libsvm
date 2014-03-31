@@ -19,11 +19,35 @@
 
 This package contains a set of Pythonic bindings for LIBSVM.
 
+External Software Requirements
+------------------------------
+
+This package requires you have ``LIBSVM`` installed on your system. If
+``LIBSVM`` is installed on a standard location, this package will find it
+automatically. You can just skip to the installation instructions.
+
+In case you have installed ``LIBSVM`` on a non-standard location (e.g. your
+home directory), then you can specify the path to the root of that installation
+using the environment variable ``XBOB_PREFIX_PATH``, **before** building and
+installing the package. For example, if ``XBOB_PREFIX_PATH`` is set to
+``/home/user/libsvm-3.12``, then we will search for the header file ``svm.h``
+in ``/home/user/libsvm-3.12/include`` and expect that the library file file is
+found under ``/home/user/libsvm-3.12/lib``.
+
+If you are installing this package via ``pip`` for example, just set the
+environment variable like this::
+
+  $ XBOB_PREFIX_PATH=/home/user/libsvm-3.12 pip install xbob.learn.libsvm
+
+If you are installing this package via ``zc.buildout``, we recommend you use
+our `xbob.buildout <http://pypi.python.org/pypi/xbob.buildout>`_ extension and
+set the ``[environ]`` section to define ``XBOB_PREFIX_PATH``.
+
 Installation
 ------------
 
-Install it through normal means, via PyPI or use ``zc.buildout`` to bootstrap
-the package and run test units.
+Install it through normal means, via ``pip`` or use ``zc.buildout`` to
+bootstrap the package itself and run test units.
 
 Documentation
 -------------
