@@ -67,8 +67,8 @@ def test_get_and_set():
   nose.tools.eq_(trainer.degree, 2)
   trainer.gamma = 2
   nose.tools.eq_(trainer.gamma, 2)
-  trainer.nu = 2
-  nose.tools.eq_(trainer.nu, 2)
+  trainer.nu = 0.5
+  nose.tools.eq_(trainer.nu, 0.5)
   trainer.stop_epsilon = 2
   nose.tools.eq_(trainer.stop_epsilon, 2)
   trainer.shrinking = False

@@ -338,7 +338,7 @@ static int PyBobLearnLibsvmTrainer_setNu
   double value = PyFloat_AsDouble(o);
   if (PyErr_Occurred()) return -1;
   if (value < 0 || value > 1) {
-    PyErr_SetString(PyExc_ValueError, "nu has to be in range [0,1]");
+    PyErr_SetString(PyExc_ValueError, "nu has to live in range [0,1]");
     return -1;
   }
   self->cxx->setNu(value);
