@@ -294,7 +294,9 @@ static int PyBobLearnLibsvmTrainer_setStopEpsilon
 
 PyDoc_STRVAR(s_cost_str, "cost");
 PyDoc_STRVAR(s_cost_doc,
-"The cost value for ``C_SVC``, ``EPSILON_SVR`` or ``NU_SVR``");
+"The cost value for ``C_SVC``, ``EPSILON_SVR`` or ``NU_SVR``.\n\
+This parameter is normally referred only as :math:`C` on\n\
+literature. It should be a non-negative floating-point number.");
 
 static PyObject* PyBobLearnLibsvmTrainer_getCost
 (PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
@@ -307,14 +309,20 @@ static int PyBobLearnLibsvmTrainer_setCost
     PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
     return -1;
   }
-  self->cxx->setCost(PyFloat_AsDouble(o));
+  double value = PyFloat_AsDouble(o);
   if (PyErr_Occurred()) return -1;
+  if (value < 0) {
+    PyErr_SetString(PyExc_ValueError, "cost (C) has to be >= 0.0");
+    return -1;
+  }
+  self->cxx->setCost(value);
   return 0;
 }
 
 PyDoc_STRVAR(s_nu_str, "nu");
 PyDoc_STRVAR(s_nu_doc,
-"The nu value for ``NU_SVC``, ``ONE_CLASS`` or ``NU_SVR``");
+"The nu value for ``NU_SVC``, ``ONE_CLASS`` or ``NU_SVR``.\n\
+This parameter should live in the range [0, 1].");
 
 static PyObject* PyBobLearnLibsvmTrainer_getNu
 (PyBobLearnLibsvmTrainerObject* self, void* /*closure*/) {
@@ -327,8 +335,13 @@ static int PyBobLearnLibsvmTrainer_setNu
     PyErr_SetString(PyExc_TypeError, "cannot delete attribute");
     return -1;
   }
-  self->cxx->setNu(PyFloat_AsDouble(o));
+  double value = PyFloat_AsDouble(o);
   if (PyErr_Occurred()) return -1;
+  if (value < 0 || value > 1) {
+    PyErr_SetString(PyExc_ValueError, "nu has to be in range [0,1]");
+    return -1;
+  }
+  self->cxx->setNu(value);
   return 0;
 }
 
