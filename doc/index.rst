@@ -8,6 +8,8 @@
  Bob-LIBSVM Python Bindings
 ============================
 
+.. todolist::
+
 This module contains a set of Pythonic bindings to LIBSVM that work well with
 Bob, following its Machine/Trainer machine learning model. Our extension can
 load and save native LIBSVM files for trained machines, but also supports
