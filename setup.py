@@ -113,7 +113,8 @@ class libsvm:
 
     # find library
     prefix = os.path.dirname(os.path.dirname(self.include_directory))
-    candidates = find_library('svm', version=self.version,
+    module = 'svm'
+    candidates = find_library(module, version=self.version,
             prefixes=[prefix], only_static=only_static)
 
     if not candidates:
