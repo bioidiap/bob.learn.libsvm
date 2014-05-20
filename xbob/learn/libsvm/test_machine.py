@@ -13,7 +13,7 @@ import numpy
 import tempfile
 import pkg_resources
 import nose.tools
-import xbob.io
+import xbob.io.base
 
 from . import File, Machine
 
@@ -102,11 +102,11 @@ def test_can_save_hdf5():
 
   machine = Machine(HEART_MACHINE)
   tmp = tempname('.hdf5')
-  machine.save(xbob.io.HDF5File(tmp, 'w'))
+  machine.save(xbob.io.base.HDF5File(tmp, 'w'))
   del machine
 
   # make sure that the save machine is the same as before
-  machine = Machine(xbob.io.HDF5File(tmp))
+  machine = Machine(xbob.io.base.HDF5File(tmp))
   nose.tools.eq_(machine.shape, (13,1))
   nose.tools.eq_(machine.kernel_type, 'RBF')
   nose.tools.eq_(machine.machine_type, 'C_SVC')

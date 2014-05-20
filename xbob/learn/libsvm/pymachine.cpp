@@ -10,7 +10,7 @@
 #define XBOB_LEARN_LIBSVM_MODULE
 #include <xbob.blitz/cppapi.h>
 #include <xbob.blitz/cleanup.h>
-#include <xbob.io/api.h>
+#include <xbob.io.base/api.h>
 #include <xbob.learn.libsvm/api.h>
 #include <structmember.h>
 
