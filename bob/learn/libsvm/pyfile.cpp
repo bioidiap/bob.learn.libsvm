@@ -7,18 +7,18 @@
  * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
  */
 
-#define XBOB_LEARN_LIBSVM_MODULE
-#include <xbob.blitz/cppapi.h>
-#include <xbob.blitz/cleanup.h>
-#include <xbob.io.base/api.h>
-#include <xbob.learn.libsvm/api.h>
+#define BOB_LEARN_LIBSVM_MODULE
+#include <bob.blitz/cppapi.h>
+#include <bob.blitz/cleanup.h>
+#include <bob.io.base/api.h>
+#include <bob.learn.libsvm/api.h>
 #include <structmember.h>
 
 /***********************************************
  * Implementation of Support Vector File class *
  ***********************************************/
 
-PyDoc_STRVAR(s_file_str, XBOB_EXT_MODULE_PREFIX ".File");
+PyDoc_STRVAR(s_file_str, BOB_EXT_MODULE_PREFIX ".File");
 
 PyDoc_STRVAR(s_file_doc,
 "File(path)\n\
@@ -159,7 +159,7 @@ PyObject* PyBobLearnLibsvmFile_Repr(PyBobLearnLibsvmFileObject* self) {
   /**
    * Expected output:
    *
-   * xbob.learn.libsvm.File('filename')
+   * bob.learn.libsvm.File('filename')
    */
 
   PyObject* retval = PyUnicode_FromFormat("%s('%s')",
@@ -181,7 +181,7 @@ PyObject* PyBobLearnLibsvmFile_Str(PyBobLearnLibsvmFileObject* self) {
   /**
    * Expected output:
    *
-   * xbob.learn.libsvm.File('filename') <float64@(3, 4)>
+   * bob.learn.libsvm.File('filename') <float64@(3, 4)>
    */
 
   PyObject* retval = PyUnicode_FromFormat("%s('%s')  <float64@(%" PY_FORMAT_SIZE_T "d, %" PY_FORMAT_SIZE_T "d)>",

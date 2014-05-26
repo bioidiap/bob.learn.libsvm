@@ -8,19 +8,19 @@
 
   import os
   import numpy
-  import xbob.learn.libsvm
+  import bob.learn.libsvm
 
   def F(m, f):
     from pkg_resources import resource_filename
     return resource_filename(m, os.path.join('data', f))
 
-  heart_model = F('xbob.learn.libsvm', 'heart.svmmodel')
+  heart_model = F('bob.learn.libsvm', 'heart.svmmodel')
 
-  svm = xbob.learn.libsvm.Machine(heart_model)
+  svm = bob.learn.libsvm.Machine(heart_model)
 
-  heart_data = F('xbob.learn.libsvm', 'heart.svmdata')
+  heart_data = F('bob.learn.libsvm', 'heart.svmdata')
 
-  f = xbob.learn.libsvm.File(heart_data)
+  f = bob.learn.libsvm.File(heart_data)
 
 ======================================
  Support Vector Machines and Trainers
@@ -30,7 +30,7 @@ A **Support vector machine** (SVM) [1]_ is a very popular `supervised` learning
 technique. |project| provides a bridge to `LIBSVM`_ which allows you to `train`
 such a `machine` and use it for classification. This section contains a
 tutorial on how to use |project|'s Pythonic bindings to LIBSVM. It starts by
-introducing the support vector :py:class:`xbob.learn.libsvm.Machine` followed
+introducing the support vector :py:class:`bob.learn.libsvm.Machine` followed
 by the trainer usage.
 
 Machines
@@ -53,9 +53,9 @@ remaining examples here.
   features to be discriminated). The number of features is 13.
 
 Our extensions to `LIBSVM`_ also allows you to feed data through a
-:py:class:`xbob.learn.libsvm.Machine` using :py:class:`numpy.ndarray` objects
+:py:class:`bob.learn.libsvm.Machine` using :py:class:`numpy.ndarray` objects
 and collect results in that format. For the following lines, we assume you have
-available a :py:class:`xbob.learn.libsvm.Machine` named ``svm``. (For this
+available a :py:class:`bob.learn.libsvm.Machine` named ``svm``. (For this
 example, the variable ``svm`` was generated from the ``heart_scale`` dataset
 using the application ``svm-train`` with default parameters). The ``shape``
 attribute, indicates how many features a machine from this module can input and
@@ -75,14 +75,14 @@ To run a single example through the SVM, just use the ``()`` operator:
   >> svm(numpy.ones((10,13), 'float64'))
   (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 
-Visit the documentation for :py:class:`xbob.learn.libsvm.Machine` to find more
+Visit the documentation for :py:class:`bob.learn.libsvm.Machine` to find more
 information about these bindings and methods you can call on such a machine.
-Visit the documentation for :py:class:`xbob.learn.libsvm.File` for information
+Visit the documentation for :py:class:`bob.learn.libsvm.File` for information
 on loading `LIBSVM`_ data files directly into python and producing
 :py:class:`numpy.ndarray` objects.
 
 Below is a quick example: Suppose the variable ``f`` contains an object of
-type :py:class:`xbob.learn.libsvm.File`. Then, you could read data (and labels)
+type :py:class:`bob.learn.libsvm.File`. Then, you could read data (and labels)
 from the file like this:
 
 .. doctest::
@@ -124,15 +124,15 @@ training set for a two class problem:
    If you want to implement that generically, please do it.
 
 Then, an SVM [1]_ can be trained easily using the
-:py:class:`xbob.learn.libsvm.Trainer` class.
+:py:class:`bob.learn.libsvm.Trainer` class.
 
 .. doctest::
    :options: +NORMALIZE_WHITESPACE
 
-   >>> trainer = xbob.learn.libsvm.Trainer()
+   >>> trainer = bob.learn.libsvm.Trainer()
    >>> machine = trainer.train(data) #ordering only affects labels
 
-This returns a :py:class:`xbob.learn.libsvm.Machine` which can later be used
+This returns a :py:class:`bob.learn.libsvm.Machine` which can later be used
 for classification, as explained before.
 
 .. doctest::
@@ -145,7 +145,7 @@ for classification, as explained before.
 The `training` procedure allows setting several different options. For
 instance, the default `kernel` is an `RBF`. If we would like a `linear SVM`
 instead, this can be set before calling the
-:py:meth:`xbob.learn.libsvm.Trainer.train` method.
+:py:meth:`bob.learn.libsvm.Trainer.train` method.
 
 .. doctest::
    :options: +NORMALIZE_WHITESPACE

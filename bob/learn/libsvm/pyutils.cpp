@@ -7,9 +7,9 @@
  * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
-#define XBOB_LEARN_LIBSVM_MODULE
-#include <xbob.blitz/cleanup.h>
-#include <xbob.learn.libsvm/api.h>
+#define BOB_LEARN_LIBSVM_MODULE
+#include <bob.blitz/cleanup.h>
+#include <bob.learn.libsvm/api.h>
 
 PyObject* PyBobLearnLibsvm_MachineTypeAsString(bob::learn::libsvm::machine_t s) {
   switch(s) {

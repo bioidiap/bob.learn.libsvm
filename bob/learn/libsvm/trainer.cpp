@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
-#include <xbob.learn.libsvm/trainer.h>
+#include <bob.learn.libsvm/trainer.h>
 #include <boost/format.hpp>
 #include <boost/make_shared.hpp>
 #include <bob/core/logging.h>

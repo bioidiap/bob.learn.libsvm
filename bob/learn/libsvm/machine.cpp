@@ -7,7 +7,7 @@
  * Copyright (C) 2011-2013 Idiap Research Institute, Martigny, Switzerland
  */
 
-#include <xbob.learn.libsvm/machine.h>
+#include <bob.learn.libsvm/machine.h>
 
 #include <sys/stat.h>
 #include <boost/format.hpp>

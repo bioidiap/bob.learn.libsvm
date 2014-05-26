@@ -2,16 +2,16 @@
 .. Andre Anjos <andre.anjos@idiap.ch>
 .. Fri 13 Dec 2013 12:35:22 CET
 
-.. image:: https://travis-ci.org/bioidiap/xbob.learn.libsvm.svg?branch=master
-   :target: https://travis-ci.org/bioidiap/xbob.learn.libsvm
-.. image:: https://coveralls.io/repos/bioidiap/xbob.learn.libsvm/badge.png
-   :target: https://coveralls.io/r/bioidiap/xbob.learn.libsvm
-.. image:: http://img.shields.io/github/tag/bioidiap/xbob.learn.libsvm.png
-   :target: https://github.com/bioidiap/xbob.learn.libsvm
-.. image:: http://img.shields.io/pypi/v/xbob.learn.libsvm.png
-   :target: https://pypi.python.org/pypi/xbob.learn.libsvm
-.. image:: http://img.shields.io/pypi/dm/xbob.learn.libsvm.png
-   :target: https://pypi.python.org/pypi/xbob.learn.libsvm
+.. image:: https://travis-ci.org/bioidiap/bob.learn.libsvm.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/bob.learn.libsvm
+.. image:: https://coveralls.io/repos/bioidiap/bob.learn.libsvm/badge.png
+   :target: https://coveralls.io/r/bioidiap/bob.learn.libsvm
+.. image:: http://img.shields.io/github/tag/bioidiap/bob.learn.libsvm.png
+   :target: https://github.com/bioidiap/bob.learn.libsvm
+.. image:: http://img.shields.io/pypi/v/bob.learn.libsvm.png
+   :target: https://pypi.python.org/pypi/bob.learn.libsvm
+.. image:: http://img.shields.io/pypi/dm/bob.learn.libsvm.png
+   :target: https://pypi.python.org/pypi/bob.learn.libsvm
 
 ================================
  Bob-Python bindings for LIBSVM
@@ -28,8 +28,8 @@ automatically. You can just skip to the installation instructions.
 
 In case you have installed ``LIBSVM`` on a non-standard location (e.g. your
 home directory), then you can specify the path to the root of that installation
-using the environment variable ``XBOB_PREFIX_PATH``, **before** building and
-installing the package. For example, if ``XBOB_PREFIX_PATH`` is set to
+using the environment variable ``BOB_PREFIX_PATH``, **before** building and
+installing the package. For example, if ``BOB_PREFIX_PATH`` is set to
 ``/home/user/libsvm-3.12``, then we will search for the header file ``svm.h``
 in ``/home/user/libsvm-3.12/include`` and expect that the library file file is
 found under ``/home/user/libsvm-3.12/lib``.
@@ -37,11 +37,11 @@ found under ``/home/user/libsvm-3.12/lib``.
 If you are installing this package via ``pip`` for example, just set the
 environment variable like this::
 
-  $ XBOB_PREFIX_PATH=/home/user/libsvm-3.12 pip install xbob.learn.libsvm
+  $ BOB_PREFIX_PATH=/home/user/libsvm-3.12 pip install bob.learn.libsvm
 
 If you are installing this package via ``zc.buildout``, we recommend you use
-our `xbob.buildout <http://pypi.python.org/pypi/xbob.buildout>`_ extension and
-set the ``[environ]`` section to define ``XBOB_PREFIX_PATH``.
+our `bob.buildout <http://pypi.python.org/pypi/bob.buildout>`_ extension and
+set the ``[environ]`` section to define ``BOB_PREFIX_PATH``.
 
 Installation
 ------------
@@ -65,7 +65,7 @@ Testing
 
 You can run a set of tests using the nose test runner::
 
-  $ nosetests -sv xbob.learn.libsvm
+  $ nosetests -sv bob.learn.libsvm
 
 .. warning::
 
@@ -82,7 +82,7 @@ You can run our documentation tests using sphinx itself::
 
 You can test overall test coverage with::
 
-  $ nosetests --with-coverage --cover-package=xbob.learn.libsvm
+  $ nosetests --with-coverage --cover-package=bob.learn.libsvm
 
 The ``coverage`` egg must be installed for this to work properly.
 

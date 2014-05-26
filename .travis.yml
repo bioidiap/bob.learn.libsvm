@@ -26,8 +26,8 @@ install:
   - "python bootstrap.py"
   - "CFLAGS=-coverage ./bin/buildout"
 script:
-  - "./bin/python -c 'from xbob.learn.libsvm import get_config; print(get_config())'"
-  - "./bin/coverage run --source=xbob.learn.libsvm ./bin/nosetests -sv"
+  - "./bin/python -c 'from bob.learn.libsvm import get_config; print(get_config())'"
+  - "./bin/coverage run --source=bob.learn.libsvm ./bin/nosetests -sv"
   - "./bin/sphinx-build -b doctest doc sphinx"
   - "./bin/sphinx-build -b html doc sphinx"
 after_success:

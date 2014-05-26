@@ -7,18 +7,18 @@
  * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
-#define XBOB_LEARN_LIBSVM_MODULE
-#include <xbob.blitz/cppapi.h>
-#include <xbob.blitz/cleanup.h>
-#include <xbob.io.base/api.h>
-#include <xbob.learn.libsvm/api.h>
+#define BOB_LEARN_LIBSVM_MODULE
+#include <bob.blitz/cppapi.h>
+#include <bob.blitz/cleanup.h>
+#include <bob.io.base/api.h>
+#include <bob.learn.libsvm/api.h>
 #include <structmember.h>
 
 /*******************************************************
  * Implementation of Support Vector Trainer base class *
  *******************************************************/
 
-PyDoc_STRVAR(s_svm_str, XBOB_EXT_MODULE_PREFIX ".Trainer");
+PyDoc_STRVAR(s_svm_str, BOB_EXT_MODULE_PREFIX ".Trainer");
 
 PyDoc_STRVAR(s_svm_doc,
 "Trainer([machine_type='C_SVC', [kernel_type='RBF', [cache_size=100, [stop_epsilon=1e-3, [shrinking=True, [probability=False]]]]]]) -> new Trainer\n\
@@ -81,7 +81,7 @@ probability, bool\n\
 ");
 
 /***********************************************
- * Implementation of xbob.learn.libsvm.Trainer *
+ * Implementation of bob.learn.libsvm.Trainer *
  ***********************************************/
 
 static int PyBobLearnLibsvmTrainer_init
@@ -508,7 +508,7 @@ PyObject* PyBobLearnLibsvmTrainer_Repr(PyBobLearnLibsvmTrainerObject* self) {
   /**
    * Expected output:
    *
-   * <xbob.learn.libsvm.Trainer>
+   * <bob.learn.libsvm.Trainer>
    *
    * @TODO: Improve this output
    */
@@ -531,7 +531,7 @@ PyObject* PyBobLearnLibsvmTrainer_Str(PyBobLearnLibsvmTrainerObject* self) {
   /**
    * Expected output:
    *
-   * xbob.learn.libsvm.Trainer
+   * bob.learn.libsvm.Trainer
    *
    * TODO: Not fully implemented yet
    */

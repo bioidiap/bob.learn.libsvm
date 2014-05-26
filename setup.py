@@ -4,17 +4,17 @@
 # Mon 16 Apr 08:18:08 2012 CEST
 
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['xbob.extension', 'xbob.blitz', 'xbob.io.base']))
-from xbob.extension.utils import egrep, find_header, find_library
-from xbob.blitz.extension import Extension
-import xbob.io.base
+dist.Distribution(dict(setup_requires=['bob.extension', 'bob.blitz', 'bob.io.base']))
+from bob.extension.utils import egrep, find_header, find_library
+from bob.blitz.extension import Extension
+import bob.io.base
 
 import os
 package_dir = os.path.dirname(os.path.realpath(__file__))
-package_dir = os.path.join(package_dir, 'xbob', 'learn', 'libsvm', 'include')
+package_dir = os.path.join(package_dir, 'bob', 'learn', 'libsvm', 'include')
 include_dirs = [
     package_dir,
-    xbob.io.base.get_include(),
+    bob.io.base.get_include(),
     ]
 
 packages = ['bob-core >= 1.2.2', 'bob-io >= 1.2.2']
@@ -42,7 +42,7 @@ class libsvm:
   .. doctest::
      :options: +NORMALIZE_WHITESPACE +ELLIPSIS
 
-     >>> from xbob.learn.libsvm import libsvm
+     >>> from bob.learn.libsvm import libsvm
      >>> l = libsvm('>= 3.12')
      >>> l.include_directory
      '...'
@@ -59,7 +59,7 @@ class libsvm:
     """
     Searches for libsvm in stock locations. Allows user to override.
 
-    If the user sets the environment variable XBOB_PREFIX_PATH, that prefixes
+    If the user sets the environment variable BOB_PREFIX_PATH, that prefixes
     the standard path locations.
 
     Parameters:
@@ -141,7 +141,7 @@ class libsvm:
     .. doctest::
        :options: +NORMALIZE_WHITESPACE +ELLIPSIS
 
-       >>> from xbob.learn.libsvm import libsvm
+       >>> from bob.learn.libsvm import libsvm
        >>> pkg = libsvm()
        >>> pkg.macros()
        [('HAVE_LIBSVM', '1'), ('LIBSVM_VERSION', '"..."')]
@@ -157,10 +157,10 @@ define_macros = pkg.macros()
 
 setup(
 
-    name='xbob.learn.libsvm',
+    name='bob.learn.libsvm',
     version=version,
     description='Bob bindings to libsvm',
-    url='http://github.com/bioidiap/xbob.learn.libsvm',
+    url='http://github.com/bioidiap/bob.learn.libsvm',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
@@ -172,19 +172,19 @@ setup(
 
     install_requires=[
       'setuptools',
-      'xbob.blitz',
-      'xbob.io.base',
+      'bob.blitz',
+      'bob.io.base',
     ],
 
     namespace_packages=[
-      "xbob",
-      "xbob.learn",
+      "bob",
+      "bob.learn",
       ],
 
     ext_modules = [
-      Extension("xbob.learn.libsvm.version",
+      Extension("bob.learn.libsvm.version",
         [
-          "xbob/learn/libsvm/version.cpp",
+          "bob/learn/libsvm/version.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,
@@ -194,16 +194,16 @@ setup(
         library_dirs = library_dirs,
         libraries = libraries,
         ),
-      Extension("xbob.learn.libsvm._library",
+      Extension("bob.learn.libsvm._library",
         [
-          "xbob/learn/libsvm/file.cpp",
-          "xbob/learn/libsvm/machine.cpp",
-          "xbob/learn/libsvm/trainer.cpp",
-          "xbob/learn/libsvm/pyutils.cpp",
-          "xbob/learn/libsvm/pyfile.cpp",
-          "xbob/learn/libsvm/pymachine.cpp",
-          "xbob/learn/libsvm/pytrainer.cpp",
-          "xbob/learn/libsvm/main.cpp",
+          "bob/learn/libsvm/file.cpp",
+          "bob/learn/libsvm/machine.cpp",
+          "bob/learn/libsvm/trainer.cpp",
+          "bob/learn/libsvm/pyutils.cpp",
+          "bob/learn/libsvm/pyfile.cpp",
+          "bob/learn/libsvm/pymachine.cpp",
+          "bob/learn/libsvm/pytrainer.cpp",
+          "bob/learn/libsvm/main.cpp",
           ],
         packages = packages,
         include_dirs = include_dirs,

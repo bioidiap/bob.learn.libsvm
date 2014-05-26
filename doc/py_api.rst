@@ -7,8 +7,8 @@
 ============
 
 This section includes information for using the pure Python API of
-``xbob.learn.libsvm``.
+``bob.learn.libsvm``.
 
 
-.. automodule:: xbob.learn.libsvm
+.. automodule:: bob.learn.libsvm
 

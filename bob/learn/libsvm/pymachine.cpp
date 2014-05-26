@@ -7,18 +7,18 @@
  * Copyright (C) 2011-2014 Idiap Research Institute, Martigny, Switzerland
  */
 
-#define XBOB_LEARN_LIBSVM_MODULE
-#include <xbob.blitz/cppapi.h>
-#include <xbob.blitz/cleanup.h>
-#include <xbob.io.base/api.h>
-#include <xbob.learn.libsvm/api.h>
+#define BOB_LEARN_LIBSVM_MODULE
+#include <bob.blitz/cppapi.h>
+#include <bob.blitz/cleanup.h>
+#include <bob.io.base/api.h>
+#include <bob.learn.libsvm/api.h>
 #include <structmember.h>
 
 /*******************************************************
  * Implementation of Support Vector Machine base class *
  *******************************************************/
 
-PyDoc_STRVAR(s_svm_str, XBOB_EXT_MODULE_PREFIX ".Machine");
+PyDoc_STRVAR(s_svm_str, BOB_EXT_MODULE_PREFIX ".Machine");
 
 PyDoc_STRVAR(s_svm_doc,
 "Machine(path)\n\
@@ -59,7 +59,7 @@ state recovery from previous sessions.\n\
 ");
 
 /***********************************************
- * Implementation of xbob.learn.libsvm.Machine *
+ * Implementation of bob.learn.libsvm.Machine *
  ***********************************************/
 
 static int PyBobLearnLibsvmMachine_init_svmfile
@@ -416,7 +416,7 @@ PyObject* PyBobLearnLibsvmMachine_Repr(PyBobLearnLibsvmMachineObject* self) {
   /**
    * Expected output:
    *
-   * <xbob.learn.libsvm.Machine float64@(3, 2)>
+   * <bob.learn.libsvm.Machine float64@(3, 2)>
    */
 
   auto shape = make_safe(PyObject_GetAttrString((PyObject*)self, "shape"));
@@ -441,7 +441,7 @@ PyObject* PyBobLearnLibsvmMachine_Str(PyBobLearnLibsvmMachineObject* self) {
   /**
    * Expected output:
    *
-   * xbob.learn.libsvm.Machine (float64) 3 inputs, 2 outputs
+   * bob.learn.libsvm.Machine (float64) 3 inputs, 2 outputs
    *   properties...
    *
    * TODO: Not fully implemented yet
@@ -932,8 +932,8 @@ PyDoc_STRVAR(s_save_doc,
 o.save(hdf5file) -> None\n\
 \n\
 Saves itself at a LIBSVM model file or into a\n\
-:py:class:`xbob.io.HDF5File`. Saving the SVM into an\n\
-:py:class:`xbob.io.HDF5File` object, has the advantage of saving\n\
+:py:class:`bob.io.HDF5File`. Saving the SVM into an\n\
+:py:class:`bob.io.HDF5File` object, has the advantage of saving\n\
 input normalization options together with the machine, which are\n\
 automatically reloaded when you re-initialize it from the same\n\
 :py:class:`HDF5File`.\n\
