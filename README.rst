@@ -4,6 +4,8 @@
 
 .. image:: https://travis-ci.org/bioidiap/bob.learn.libsvm.svg?branch=master
    :target: https://travis-ci.org/bioidiap/bob.learn.libsvm
+.. image:: http://img.shields.io/badge/docs-latest-orange.png
+   :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.learn.libsvm/master/index.html
 .. image:: https://coveralls.io/repos/bioidiap/bob.learn.libsvm/badge.png
    :target: https://coveralls.io/r/bioidiap/bob.learn.libsvm
 .. image:: http://img.shields.io/github/tag/bioidiap/bob.learn.libsvm.png
@@ -52,8 +54,9 @@ bootstrap the package itself and run test units.
 Documentation
 -------------
 
-You can generate the documentation for this package, after installation, using
-Sphinx::
+The latest version of the documentation can be found `here <https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.learn.libsvm/master/index.html>`_.
+
+Otherwise, you can generate the documentation for this package yourself, after installation, using Sphinx::
 
   $ sphinx-build -b html doc sphinx
 
@@ -65,7 +68,7 @@ Testing
 
 You can run a set of tests using the nose test runner::
 
-  $ nosetests -sv bob.learn.libsvm
+  $ nosetests -sv
 
 .. warning::
 
