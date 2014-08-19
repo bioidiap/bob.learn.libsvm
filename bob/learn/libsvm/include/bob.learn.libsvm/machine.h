@@ -16,7 +16,7 @@
 #include <blitz/array.h>
 #include <fstream>
 #include <svm.h>
-#include <bob/io/HDF5File.h>
+#include <bob.io.base/HDF5File.h>
 
 // @cond SKIPDOXYGEN
 // We need to declare the svm_model type for libsvm < 3.0.0. The next bit of
@@ -62,6 +62,23 @@ namespace bob { namespace learn { namespace libsvm {
     PRECOMPUTED
   }; /* kernel type used on the machine */
 
+    /**
+     * @brief Chooses the correct temporary directory to use, like this:
+     *
+     * - The environment variable TMPDIR, if it is defined. For security reasons
+     *   this only happens if the program is not SUID or SGID enabled.
+     * - The directory /tmp.
+     */
+    std::string _tmpdir();
+
+    /**
+     * @brief Returns the full path of a temporary file in tmpdir().
+     *
+     * @param extension The desired extension for the file
+     */
+    std::string _tmpfile(const std::string& extension=".hdf5");
+
+
   /**
    * Here is the problem: libsvm does not provide a simple way to extract the
    * information from the SVM structure. There are lots of cases and allocation
@@ -100,7 +117,7 @@ namespace bob { namespace learn { namespace libsvm {
        * from the file. Using this constructor assures a 100% state recovery
        * from previous sessions.
        */
-      Machine(bob::io::HDF5File& config);
+      Machine(bob::io::base::HDF5File& config);
 
       /**
        * Builds a new SVM model from a trained model. Scaling parameters will
@@ -273,7 +290,7 @@ namespace bob { namespace learn { namespace libsvm {
        * single instruction parameter loading, which includes both the model
        * and the scaling parameters.
        */
-      void save(bob::io::HDF5File& config) const;
+      void save(bob::io::base::HDF5File& config) const;
 
     private: //not implemented
 

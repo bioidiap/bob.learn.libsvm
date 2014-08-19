@@ -11,7 +11,7 @@
 #define BOB_LEARN_LIBSVM_TRAINER_H
 
 #include <vector>
-#include "machine.h"
+#include <bob.learn.libsvm/machine.h>
 
 namespace bob { namespace learn { namespace libsvm {
 

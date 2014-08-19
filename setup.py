@@ -3,21 +3,16 @@
 # Andre Anjos <andre.anjos@idiap.ch>
 # Mon 16 Apr 08:18:08 2012 CEST
 
+bob_packages = ['bob.core', 'bob.io.base']
+
 from setuptools import setup, find_packages, dist
-dist.Distribution(dict(setup_requires=['bob.extension', 'bob.blitz', 'bob.io.base']))
+dist.Distribution(dict(setup_requires=['bob.blitz'] + bob_packages))
 from bob.extension.utils import egrep, find_header, find_library
-from bob.blitz.extension import Extension
-import bob.io.base
+from bob.blitz.extension import Extension, Library, build_ext
 
-import os
-package_dir = os.path.dirname(os.path.realpath(__file__))
-package_dir = os.path.join(package_dir, 'bob', 'learn', 'libsvm', 'include')
-include_dirs = [
-    package_dir,
-    bob.io.base.get_include(),
-    ]
+packages = ['boost']
+boost_modules = ['filesystem']
 
-packages = ['bob-core >= 1.2.2', 'bob-io >= 1.2.2']
 version = '2.0.0a0'
 
 # process libsvm requirement
@@ -150,7 +145,7 @@ class libsvm:
     return [('HAVE_LIBSVM', '1'), ('LIBSVM_VERSION', '"%s"' % self.version)]
 
 pkg = libsvm()
-extra_compile_args = ['-isystem', pkg.include_directory]
+system_include_dirs = [pkg.include_directory]
 library_dirs = [pkg.library_directory]
 libraries = pkg.libraries
 define_macros = pkg.macros()
@@ -174,53 +169,71 @@ setup(
     install_requires=[
       'setuptools',
       'bob.blitz',
+      'bob.core',
       'bob.io.base',
     ],
 
     namespace_packages=[
       "bob",
       "bob.learn",
-      ],
+    ],
 
     ext_modules = [
       Extension("bob.learn.libsvm.version",
         [
           "bob/learn/libsvm/version.cpp",
-          ],
-        packages = packages,
-        include_dirs = include_dirs,
+        ],
+        bob_packages = bob_packages,
         version = version,
-        extra_compile_args = extra_compile_args,
+        system_include_dirs = system_include_dirs,
         define_macros = define_macros,
         library_dirs = library_dirs,
         libraries = libraries,
-        ),
+      ),
+
+      Library("bob.learn.libsvm.bob_learn_libsvm",
+        [
+          "bob/learn/libsvm/cpp/file.cpp",
+          "bob/learn/libsvm/cpp/machine.cpp",
+          "bob/learn/libsvm/cpp/trainer.cpp",
+        ],
+        bob_packages = bob_packages,
+        version = version,
+        system_include_dirs = system_include_dirs,
+        define_macros = define_macros,
+        library_dirs = library_dirs,
+        libraries = libraries,
+        packages = packages,
+        boost_modules = boost_modules,
+      ),
+
       Extension("bob.learn.libsvm._library",
         [
+          "bob/learn/libsvm/utils.cpp",
           "bob/learn/libsvm/file.cpp",
           "bob/learn/libsvm/machine.cpp",
           "bob/learn/libsvm/trainer.cpp",
-          "bob/learn/libsvm/pyutils.cpp",
-          "bob/learn/libsvm/pyfile.cpp",
-          "bob/learn/libsvm/pymachine.cpp",
-          "bob/learn/libsvm/pytrainer.cpp",
           "bob/learn/libsvm/main.cpp",
-          ],
-        packages = packages,
-        include_dirs = include_dirs,
+        ],
+        bob_packages = bob_packages,
         version = version,
-        extra_compile_args = extra_compile_args,
+        system_include_dirs = system_include_dirs,
         define_macros = define_macros,
         library_dirs = library_dirs,
         libraries = libraries,
-        boost_modules = ['filesystem'],
-        ),
-      ],
+        packages = packages,
+        boost_modules = boost_modules,
+      ),
+    ],
+
+    cmdclass = {
+      'build_ext': build_ext
+    },
 
     entry_points={
       'console_scripts': [
-        ],
-      },
+      ],
+    },
 
     classifiers = [
       'Development Status :: 3 - Alpha',
