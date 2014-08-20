@@ -11,7 +11,7 @@ from bob.extension.utils import egrep, find_header, find_library
 from bob.blitz.extension import Extension, Library, build_ext
 
 packages = ['boost']
-boost_modules = ['filesystem']
+boost_modules = ['system', 'filesystem']
 
 version = '2.0.0a0'
 
