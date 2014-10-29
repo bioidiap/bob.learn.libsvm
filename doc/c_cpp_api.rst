@@ -293,7 +293,7 @@ objects is described in this section.
       .. note::
 
          This method is typically only used by the respective
-         :cpp:class`bob::learn::libsvm::Trainer` as it requires the creation of
+         :cpp:class:`bob::learn::libsvm::Trainer` as it requires the creation of
          the object ``svm_model``. You can still make use of it if you decide
          to implement the model instantiation yourself.
 

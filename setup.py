@@ -157,7 +157,7 @@ setup(
 
     name='bob.learn.libsvm',
     version=version,
-    description='Bob bindings to libsvm',
+    description='Bob\'s Python bindings to LIBSVM',
     url='http://github.com/bioidiap/bob.learn.libsvm',
     license='BSD',
     author='Andre Anjos',
@@ -235,13 +235,14 @@ setup(
     },
 
     classifiers = [
-      'Development Status :: 3 - Alpha',
+      'Framework :: Bob',
+      'Development Status :: 4 - Beta',
       'Intended Audience :: Developers',
       'License :: OSI Approved :: BSD License',
       'Natural Language :: English',
       'Programming Language :: Python',
       'Programming Language :: Python :: 3',
       'Topic :: Software Development :: Libraries :: Python Modules',
-      ],
+    ],
 
-    )
+)

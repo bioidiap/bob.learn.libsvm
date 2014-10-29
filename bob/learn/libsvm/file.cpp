@@ -41,7 +41,7 @@ LIBSVM uses a sparse format.\n\
 Upon construction, objects of this class will inspect the input\n\
 file so that the maximum sample size is computed. Once that job\n\
 is performed, you can read the data in your own pace using the\n\
-:py:meth:`File.read` method.\n\
+:py:meth:`read` method.\n\
 \n\
 This class is made available to you so you can input original\n\
 LIBSVM files and convert them to another better supported\n\
@@ -229,7 +229,7 @@ PyDoc_STRVAR(s_good_doc,
 Returns if the file is in a good state for readout.\n\
 It is ``True`` if the current file it has neither the\n\
 ``eof``, ``fail`` or ``bad`` bits set, whic means that\n\
-next :py:meth:`File.read` operation may succeed.\n\
+next :py:meth:`read` operation may succeed.\n\
 ");
 
 PyObject* PyBobLearnLibsvmFile_good(PyBobLearnLibsvmFileObject* self) {
@@ -254,7 +254,7 @@ PyDoc_STRVAR(s_fail_doc,
 Returns ``True`` if the file has a ``fail`` condition or\n\
 ``bad`` bit sets. It means the read operation has found a\n\
 critical condition and you can no longer proceed in reading\n\
-from the file. Note this is not the same as :py:meth:`File.eof`\n\
+from the file. Note this is not the same as :py:meth:`eof`\n\
 which informs if the file has ended, but no errors were found\n\
 during the read operations.\n\
 ");
@@ -279,7 +279,7 @@ PyDoc_STRVAR(s_eof_doc,
 "o.eof() -> bool\n\
 \n\
 Returns ``True`` if the file has reached its end. To start\n\
-reading from the file again, you must call :py:meth:`File.reset`\n\
+reading from the file again, you must call :py:meth:`reset`\n\
 before another read operation may succeed.\n\
 ");
 
@@ -305,13 +305,13 @@ PyDoc_STRVAR(s_read_doc,
 Reads a single line from the file and returns a tuple\n\
 containing the label and a numpy array of ``float64``\n\
 elements. The :py:class:`numpy.ndarray` has a shape\n\
-as defined by the :py:attr:`File.shape` attribute of\n\
+as defined by the :py:attr:`shape` attribute of\n\
 the current file. If the file has finished, this method\n\
 returns ``None`` instead.\n\
 \n\
 If the output array ``values`` is provided, it must be a\n\
 64-bit float array with a shape matching the file shape as\n\
-defined by :py:attr:`File.shape`. Providing an output\n\
+defined by :py:attr:`shape`. Providing an output\n\
 array avoids constant memory re-allocation.\n\
 \n\
 ");
@@ -391,11 +391,11 @@ Reads all contents of the file into the output arrays\n\
 The array ``labels``, if provided, must be a 1D\n\
 :py:class:`numpy.ndarray` with data type ``int64``,\n\
 containing as many positions as entries in the file, as\n\
-returned by the attribute :py:attr:`File.samples`. The\n\
+returned by the attribute :py:attr:`samples`. The\n\
 array ``values``, if provided, must be a 2D array with\n\
 data type ``float64``, as many rows as entries in the\n\
 file and as many columns as features in each entry, as\n\
-defined by the attribute :py:attr:`File.shape`.\n\
+defined by the attribute :py:attr:`shape`.\n\
 \n\
 If the output arrays ``labels`` and/or ``values`` are not\n\
 provided, they will be allocated internally and returned.\n\
@@ -404,7 +404,7 @@ provided, they will be allocated internally and returned.\n\
 \n\
    This method is intended to be used for reading the\n\
    whole contents of the input file. The file will be\n\
-   reset as by calling :py:meth:`File.reset` before the\n\
+   reset as by calling :py:meth:`reset` before the\n\
    readout starts.\n\
 \n\
 ");

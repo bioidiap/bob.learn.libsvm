@@ -932,11 +932,11 @@ PyDoc_STRVAR(s_save_doc,
 o.save(hdf5file) -> None\n\
 \n\
 Saves itself at a LIBSVM model file or into a\n\
-:py:class:`bob.io.HDF5File`. Saving the SVM into an\n\
-:py:class:`bob.io.HDF5File` object, has the advantage of saving\n\
+:py:class:`bob.io.base.HDF5File`. Saving the SVM into an\n\
+:py:class:`bob.io.base.HDF5File` object, has the advantage of saving\n\
 input normalization options together with the machine, which are\n\
 automatically reloaded when you re-initialize it from the same\n\
-:py:class:`HDF5File`.\n\
+:py:class:`bob.io.base.HDF5File`.\n\
 ");
 
 static PyObject* PyBobLearnLibsvmMachine_Save
