@@ -13,10 +13,11 @@ from bob.blitz.extension import Extension, Library, build_ext
 from bob.extension.utils import load_requirements
 build_requires = load_requirements()
 
+# Define package version
+version = open("version.txt").read().rstrip()
+
 packages = ['boost']
 boost_modules = ['system', 'filesystem']
-
-version = '2.0.0a0'
 
 # process libsvm requirement
 import os
@@ -91,15 +92,15 @@ class libsvm:
 
       # now check for user requirements
       for candidate in candidates:
-        version = libsvm_version(candidate)
-        available = LooseVersion(version)
+        vv = libsvm_version(candidate)
+        available = LooseVersion(vv)
         if (operator == '<' and available < required) or \
            (operator == '<=' and available <= required) or \
            (operator == '>' and available > required) or \
            (operator == '>=' and available >= required) or \
            (operator == '==' and available == required):
           self.include_directory = os.path.dirname(candidate)
-          self.version = version
+          self.version = vv
           found = True
           break
 
