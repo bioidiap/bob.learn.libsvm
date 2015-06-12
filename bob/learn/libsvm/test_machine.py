@@ -72,6 +72,7 @@ def test_can_load():
 
   machine = Machine(HEART_MACHINE)
   nose.tools.eq_(machine.shape, (13,1))
+  nose.tools.eq_(machine.n_support_vectors, [64,68])  
   nose.tools.eq_(machine.kernel_type, 'RBF')
   nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
@@ -89,6 +90,7 @@ def test_can_save():
   # make sure that the save machine is the same as before
   machine = Machine(tmp)
   nose.tools.eq_(machine.shape, (13,1))
+  nose.tools.eq_(machine.n_support_vectors, [64,68])
   nose.tools.eq_(machine.kernel_type, 'RBF')
   nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)
@@ -108,6 +110,7 @@ def test_can_save_hdf5():
   # make sure that the save machine is the same as before
   machine = Machine(bob.io.base.HDF5File(tmp))
   nose.tools.eq_(machine.shape, (13,1))
+  nose.tools.eq_(machine.n_support_vectors, [64,68])  
   nose.tools.eq_(machine.kernel_type, 'RBF')
   nose.tools.eq_(machine.machine_type, 'C_SVC')
   nose.tools.eq_(len(machine.labels), 2)

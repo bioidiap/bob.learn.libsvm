@@ -274,6 +274,22 @@ static PyObject* PyBobLearnLibsvmMachine_getLabels
   return retval;
 }
 
+
+PyDoc_STRVAR(s_n_support_vectors_str, "n_support_vectors");
+PyDoc_STRVAR(s_n_support_vectors_doc, "Will output the number of support vectors per class");
+
+static PyObject* PyBobLearnLibsvmMachine_getNSupportVectors
+(PyBobLearnLibsvmMachineObject* self, void* /*closure*/) {
+  PyObject* retval = PyList_New(self->cxx->numberOfClasses());
+  for (size_t k=0; k<self->cxx->numberOfClasses(); ++k) {
+    PyList_SET_ITEM(retval, k, Py_BuildValue("i", self->cxx->classNSupportVectors(k)));
+  }
+  return retval;
+}
+
+
+
+
 PyDoc_STRVAR(s_machine_type_str, "machine_type");
 PyDoc_STRVAR(s_machine_type_doc, "The type of SVM machine contained");
 
@@ -360,6 +376,15 @@ static PyGetSetDef PyBobLearnLibsvmMachine_getseters[] = {
       s_labels_doc,
       0
     },
+
+    {
+      s_n_support_vectors_str,
+      (getter)PyBobLearnLibsvmMachine_getNSupportVectors,
+      0,
+      s_n_support_vectors_doc,
+      0
+    },
+
     {
       s_machine_type_str,
       (getter)PyBobLearnLibsvmMachine_getMachineType,

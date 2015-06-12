@@ -194,6 +194,8 @@ size_t bob::learn::libsvm::Machine::numberOfClasses() const {
   return svm_get_nr_class(m_model.get());
 }
 
+
+
 int bob::learn::libsvm::Machine::classLabel(size_t i) const {
 
   if (i >= (size_t)svm_get_nr_class(m_model.get())) {
@@ -204,6 +206,19 @@ int bob::learn::libsvm::Machine::classLabel(size_t i) const {
   return m_model->label[i];
 
 }
+
+int bob::learn::libsvm::Machine::classNSupportVectors(size_t i) const {
+
+  if (i >= (size_t)svm_get_nr_class(m_model.get())) {
+    boost::format s("request data for the class %d in SVM with %d classes is not legal");
+    s % (int)i % svm_get_nr_class(m_model.get());
+    throw std::runtime_error(s.str());
+  }
+  return m_model->nSV[i];
+
+}
+
+
 
 bob::learn::libsvm::machine_t bob::learn::libsvm::Machine::machineType() const {
   return (machine_t)svm_get_svm_type(m_model.get());

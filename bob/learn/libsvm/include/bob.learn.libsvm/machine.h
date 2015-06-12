@@ -154,11 +154,19 @@ namespace bob { namespace learn { namespace libsvm {
        */
       size_t numberOfClasses() const;
 
+
       /**
        * Returns the class label (as stored inside the svm_model object) for a
        * given class 'i'.
        */
       int classLabel(size_t i) const;
+
+      /**
+       * Returns the number of suport vectors for a
+       * given class 'i'.
+       */
+      int classNSupportVectors(size_t i) const;
+
 
       /**
        * SVM type
