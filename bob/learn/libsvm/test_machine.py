@@ -131,6 +131,7 @@ def test_data_loading():
   nose.tools.eq_(data.fail(), False)
   nose.tools.eq_(data.eof(), False)
 
+
   #tries loading the data, one by one
   all_data = []
   all_labels = []
@@ -153,12 +154,17 @@ def test_data_loading():
     counter += 1
     entry = data.read()
 
+
   #tries loading the file all in a single shot
   data.reset()
   labels, data = data.read_all()
+
   assert numpy.array_equal(labels, all_labels)
   for k, l in zip(data, all_data):
     assert numpy.array_equal(k, l)
+
+
+
 
   #makes sure the first 3 examples are correctly read
   ex = []
@@ -169,9 +175,11 @@ def test_data_loading():
   ex.append(numpy.array([0.166667, 1, -0.333333, -0.433962, -0.383562, -1,
     -1, 0.0687023, -1, -0.903226, -1, -1, 1], 'float64'))
   ls = [+1, -1, +1]
+
   for k, (l, e) in enumerate(zip(ls, ex)):
     nose.tools.eq_( l, labels[k] )
     assert numpy.array_equal(e, data[k])
+
 
 @nose.tools.raises(RuntimeError)
 def test_raises():

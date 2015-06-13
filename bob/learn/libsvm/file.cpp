@@ -488,8 +488,10 @@ static PyObject* PyBobLearnLibsvmFile_read_all
     auto bzval = PyBlitzArrayCxx_AsBlitz<double,2>(values);
     blitz::Range all = blitz::Range::all();
     int k = 0;
-    while (self->cxx->good()) {
+    
+    while ((self->cxx->good()) && ((size_t)k < self->cxx->samples())) {
       blitz::Array<double,1> v_ = (*bzval)(k, all);
+      
       int label = 0;
       bool ok = self->cxx->read_(label, v_);
       if (ok) (*bzlab)(k) = label;
