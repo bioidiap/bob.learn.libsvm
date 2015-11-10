@@ -54,7 +54,6 @@ bob::learn::libsvm::machine_t PyBobLearnLibsvm_CStringAsMachineType(const char* 
     return bob::learn::libsvm::NU_SVC;
   }
   else if (s_ == "ONE_CLASS") {
-    PyErr_Format(PyExc_NotImplementedError, "support for `%s' is not currently implemented by these bindings - choose from %s", s, available);
     return bob::learn::libsvm::ONE_CLASS;
   }
   else if (s_ == "EPSILON_SVR") {

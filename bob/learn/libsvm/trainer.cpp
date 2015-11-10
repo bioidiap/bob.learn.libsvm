@@ -38,7 +38,7 @@ machine_type, str\n\
   \n\
   * ``'C_SVC'`` (the default)\n\
   * ``'NU_SVC'``\n\
-  * ``'ONE_CLASS'`` (**unsupported**)\n\
+  * ``'ONE_CLASS'`` \n\
   * ``'EPSILON_SVR'`` (**unsupported** regression)\n\
   * ``'NU_SVR'`` (**unsupported** regression)\n\
 \n\
@@ -634,13 +634,21 @@ static PyObject* PyBobLearnLibsvmTrainer_train
     }
 
     Xseq_.push_back(make_safe(bz)); ///< prevents data deletion
-    Xseq.push_back(*PyBlitzArrayCxx_AsBlitz<double,2>(bz)); ///< only a view!
+    Xseq.push_back(*PyBlitzArrayCxx_AsBlitz<double,2>(bz)); ///< only a view!  
   }
 
   if (PyErr_Occurred()) return 0;
 
-  if (Xseq.size() < 2) {
+
+  // To Review this checks. It is probably that we have to create differents chechs when machine type is ONE_CLASS
+
+  if ( (Xseq.size() < 2) && (self->cxx->getMachineType()!=bob::learn::libsvm::machine_t::ONE_CLASS) ) {
     PyErr_Format(PyExc_RuntimeError, "`%s' requires an iterable for parameter `X' leading to, at least, two entries (representing two classes), but you have passed something that has only %" PY_FORMAT_SIZE_T "d entries", Py_TYPE(self)->tp_name, Xseq.size());
+    return 0;
+  }
+  
+  if ( (Xseq.size() < 1) && (self->cxx->getMachineType()==bob::learn::libsvm::machine_t::ONE_CLASS) ) {
+    PyErr_Format(PyExc_RuntimeError, "`%s' requires an iterable for parameter `X' leading to, at least, one entry (representing one class), but you have passed something that has only %" PY_FORMAT_SIZE_T "d entries", Py_TYPE(self)->tp_name, Xseq.size());
     return 0;
   }
 
@@ -663,16 +671,19 @@ static PyObject* PyBobLearnLibsvmTrainer_train
   }
 
   /** all basic checks are done, can call the machine now **/
+
+  //std::cout << "all basic checks are done, can call the machine now..."  << std::endl;
   try {
     bob::learn::libsvm::Machine* machine;
-    if (subtract && divide) {
-      machine = self->cxx->train(Xseq,
-          *PyBlitzArrayCxx_AsBlitz<double,1>(subtract),
-          *PyBlitzArrayCxx_AsBlitz<double,1>(divide)
-          );
+    
+    if(self->cxx->getMachineType()==bob::learn::libsvm::machine_t::ONE_CLASS)
+    {
+       if (subtract && divide) machine = self->cxx->train(Xseq,*PyBlitzArrayCxx_AsBlitz<double,1>(subtract),*PyBlitzArrayCxx_AsBlitz<double,1>(divide));
+       else  machine = self->cxx->train(Xseq);   
     }
-    else {
-      machine = self->cxx->train(Xseq);
+    else { 
+      if (subtract && divide) machine = self->cxx->train(Xseq,*PyBlitzArrayCxx_AsBlitz<double,1>(subtract),*PyBlitzArrayCxx_AsBlitz<double,1>(divide));
+      else machine = self->cxx->train(Xseq);
     }
     return PyBobLearnLibsvmMachine_NewFromMachine(machine);
   }

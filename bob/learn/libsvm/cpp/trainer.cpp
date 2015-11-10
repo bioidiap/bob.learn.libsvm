@@ -111,15 +111,29 @@ static boost::shared_ptr<svm_problem> data2problem
       std::ptr_fun(delete_problem));
 
   //choose labels.
-  if ((data.size() <= 1) | (data.size() > 16)) {
-    boost::format m("Only supports SVMs for binary or multi-class classification problems (up to 16 classes). You passed me a list of %d arraysets.");
-    m % data.size();
-    throw std::runtime_error(m.str());
+  if(param.svm_type==ONE_CLASS)
+  {
+    if ((data.size() != 1)) {
+      boost::format m("Only support a singular entry for one class. Your are training ONE_CLASS svm classifier. You passed me a list of %d arraysets.");
+      m % data.size();
+      throw std::runtime_error(m.str());
+    }
+  }
+  else {
+    if ((data.size() <= 1) | (data.size() > 16)) {
+      boost::format m("Only supports SVMs for binary or multi-class classification problems (up to 16 classes). You passed me a list of %d arraysets.");
+      m % data.size();
+      throw std::runtime_error(m.str());
+    }
   }
 
   std::vector<double> labels;
   labels.reserve(data.size());
-  if (data.size() == 2) {
+  if (data.size() == 1) {
+    //oc-svm only support one class. 
+    labels.push_back(+1.);
+  }
+  else if (data.size() == 2) {
     //keep libsvm ordering
     labels.push_back(+1.);
     labels.push_back(-1.);
@@ -266,9 +280,11 @@ bob::learn::libsvm::Machine* bob::learn::libsvm::Trainer::train
 bob::learn::libsvm::Machine* bob::learn::libsvm::Trainer::train
 (const std::vector<blitz::Array<double,2> >& data) const {
   int n_features = data[0].extent(blitz::secondDim);
+
   blitz::Array<double,1> sub(n_features);
   sub = 0.;
   blitz::Array<double,1> div(n_features);
   div = 1.;
   return train(data, sub, div);
 }
+
