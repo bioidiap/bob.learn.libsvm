@@ -152,6 +152,40 @@ instead, this can be set before calling the
 
    >>> trainer.kernel_type = 'LINEAR'
 
+One Class SVM
+=============
+
+On the other hand, the package allows you to train a One Class Support Vector Machine. For training this kind of classifier take into account the following example.
+
+.. doctest::
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> pos = 0.4 * numpy.random.randn(100, 2).astype(numpy.float64)
+   >>> data = [pos]
+   >>> print(data) # doctest: +SKIP
+
+
+As the above example, an SVM [1]_ for one class problem can be trained easily using the
+:py:class:`bob.learn.libsvm.Trainer` class and selecting the appropiete machine_type (ONE_CLASS).
+
+.. doctest::
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> trainer = bob.learn.libsvm.Trainer(machine_type='ONE_CLASS')
+   >>> machine = trainer.train(data)
+
+Then, as explained before, a :py:class:`bob.learn.libsvm.Machine` can be used for classify the new entries. 
+
+.. doctest::
+   :options: +NORMALIZE_WHITESPACE
+
+   >>> test = 0.4 * numpy.random.randn(20, 2).astype(numpy.float64)
+   >>> outliers = numpy.random.uniform(low=-4, high=4, size=(20, 2)).astype(numpy.float64)
+   >>> predicted_label_test = machine(test)
+   >>> predicted_label_outliers = machine(outliers)
+   >>> print(predicted_label)
+   >>> print(predicted_label)
+
 
 Acknowledgements
 ----------------
