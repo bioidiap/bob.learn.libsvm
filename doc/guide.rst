@@ -183,8 +183,8 @@ Then, as explained before, a :py:class:`bob.learn.libsvm.Machine` can be used fo
    >>> outliers = numpy.random.uniform(low=-4, high=4, size=(20, 2)).astype(numpy.float64)
    >>> predicted_label_test = machine(test)
    >>> predicted_label_outliers = machine(outliers)
-   >>> print(predicted_label)
-   >>> print(predicted_label)
+   >>> print(predicted_label_test) # doctest: +SKIP
+   >>> print(predicted_label_outliers) # doctest: +SKIP
 
 
 Acknowledgements
