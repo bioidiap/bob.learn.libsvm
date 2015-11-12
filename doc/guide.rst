@@ -160,8 +160,8 @@ On the other hand, the package allows you to train a One Class Support Vector Ma
 .. doctest::
    :options: +NORMALIZE_WHITESPACE
 
-   >>> pos = 0.4 * numpy.random.randn(100, 2).astype(numpy.float64)
-   >>> data = [pos]
+   >>> oc_pos = 0.4 * numpy.random.randn(100, 2).astype(numpy.float64)
+   >>> data = [oc_pos]
    >>> print(data) # doctest: +SKIP
 
 
