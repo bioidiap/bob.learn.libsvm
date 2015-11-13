@@ -161,8 +161,8 @@ On the other hand, the package allows you to train a One Class Support Vector Ma
    :options: +NORMALIZE_WHITESPACE
 
    >>> oc_pos = 0.4 * numpy.random.randn(100, 2).astype(numpy.float64)
-   >>> data = [oc_pos]
-   >>> print(data) # doctest: +SKIP
+   >>> oc_data = [oc_pos]
+   >>> print(oc_data) # doctest: +SKIP
 
 
 As the above example, an SVM [1]_ for one class problem can be trained easily using the
@@ -171,20 +171,20 @@ As the above example, an SVM [1]_ for one class problem can be trained easily us
 .. doctest::
    :options: +NORMALIZE_WHITESPACE
 
-   >>> trainer = bob.learn.libsvm.Trainer(machine_type='ONE_CLASS')
-   >>> machine = trainer.train(data)
+   >>> oc_trainer = bob.learn.libsvm.Trainer(machine_type='ONE_CLASS')
+   >>> oc_machine = oc_trainer.train(oc_data)
 
 Then, as explained before, a :py:class:`bob.learn.libsvm.Machine` can be used for classify the new entries. 
 
 .. doctest::
    :options: +NORMALIZE_WHITESPACE
 
-   >>> test = 0.4 * numpy.random.randn(20, 2).astype(numpy.float64)
-   >>> outliers = numpy.random.uniform(low=-4, high=4, size=(20, 2)).astype(numpy.float64)
-   >>> predicted_label_test = machine(test)
-   >>> predicted_label_outliers = machine(outliers)
-   >>> print(predicted_label_test) # doctest: +SKIP
-   >>> print(predicted_label_outliers) # doctest: +SKIP
+   >>> oc_test = 0.4 * numpy.random.randn(20, 2).astype(numpy.float64)
+   >>> oc_outliers = numpy.random.uniform(low=-4, high=4, size=(20, 2)).astype(numpy.float64)
+   >>> predicted_label_oc_test = oc_machine(oc_test)
+   >>> predicted_label_oc_outliers = oc_machine(oc_outliers)
+   >>> print(predicted_label_oc_test) # doctest: +SKIP
+   >>> print(predicted_label_oc_outliers) # doctest: +SKIP
 
 
 Acknowledgements
