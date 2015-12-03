@@ -47,22 +47,24 @@ static PyObject* create_module (void) {
   if (PyType_Ready(&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
 
 # if PY_VERSION_HEX >= 0x03000000
-  PyObject* m = PyModule_Create(&module_definition);
+  PyObject* module = PyModule_Create(&module_definition);
+  auto module_ = make_xsafe(module);
+  const char* ret = "O";
 # else
-  PyObject* m = Py_InitModule3(BOB_EXT_MODULE_NAME, module_methods, module_docstr);
+  PyObject* module = Py_InitModule3(BOB_EXT_MODULE_NAME, module_methods, module_docstr);
+  const char* ret = "N";
 # endif
-  if (!m) return 0;
-  auto m_ = make_safe(m);
+  if (!module) return 0;
 
   /* register the types to python */
   Py_INCREF(&PyBobLearnLibsvmFile_Type);
-  if (PyModule_AddObject(m, "File", (PyObject *)&PyBobLearnLibsvmFile_Type) < 0) return 0;
+  if (PyModule_AddObject(module, "File", (PyObject *)&PyBobLearnLibsvmFile_Type) < 0) return 0;
 
   Py_INCREF(&PyBobLearnLibsvmMachine_Type);
-  if (PyModule_AddObject(m, "Machine", (PyObject *)&PyBobLearnLibsvmMachine_Type) < 0) return 0;
+  if (PyModule_AddObject(module, "Machine", (PyObject *)&PyBobLearnLibsvmMachine_Type) < 0) return 0;
 
   Py_INCREF(&PyBobLearnLibsvmTrainer_Type);
-  if (PyModule_AddObject(m, "Trainer", (PyObject *)&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
+  if (PyModule_AddObject(module, "Trainer", (PyObject *)&PyBobLearnLibsvmTrainer_Type) < 0) return 0;
 
   static void* PyBobLearnLibsvm_API[PyBobLearnLibsvm_API_pointers];
 
@@ -129,14 +131,14 @@ static PyObject* create_module (void) {
 
 #endif
 
-  if (c_api_object) PyModule_AddObject(m, "_C_API", c_api_object);
+  if (c_api_object) PyModule_AddObject(module, "_C_API", c_api_object);
 
   /* imports dependencies */
   if (import_bob_blitz() < 0) return 0;
   if (import_bob_core_logging() < 0) return 0;
   if (import_bob_io_base() < 0) return 0;
 
-  return Py_BuildValue("O", m);
+  return Py_BuildValue(ret, module);
 }
 
 PyMODINIT_FUNC BOB_EXT_ENTRY_NAME (void) {
