@@ -448,7 +448,7 @@ PyObject* PyBobLearnLibsvmMachine_Repr(PyBobLearnLibsvmMachineObject* self) {
       self->cxx->outputSize());
 
   PyObject* retval = PyUnicode_FromFormat("<%s float64@%U>",
-      Py_TYPE(self)->tp_name, PyObject_Unicode(shape));
+      Py_TYPE(self)->tp_name, PYOBJECT_STR(shape));
 
 #if PYTHON_VERSION_HEX < 0x03000000
   if (!retval) return 0;
