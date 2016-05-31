@@ -444,11 +444,11 @@ PyObject* PyBobLearnLibsvmMachine_Repr(PyBobLearnLibsvmMachineObject* self) {
    * <bob.learn.libsvm.Machine float64@(3, 2)>
    */
 
-  auto shape = make_safe(PyObject_GetAttrString((PyObject*)self, "shape"));
-  auto shape_str = make_safe(PyObject_Str(shape.get()));
+  PyObject* shape = Py_BuildValue("(nn)", self->cxx->inputSize(),
+      self->cxx->outputSize());
 
   PyObject* retval = PyUnicode_FromFormat("<%s float64@%U>",
-      Py_TYPE(self)->tp_name, shape_str.get());
+      Py_TYPE(self)->tp_name, PYOBJECT_STR(shape));
 
 #if PYTHON_VERSION_HEX < 0x03000000
   if (!retval) return 0;
