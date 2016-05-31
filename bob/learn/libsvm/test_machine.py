@@ -79,6 +79,7 @@ def test_can_load():
   assert -1 in machine.labels
   assert +1 in machine.labels
   assert abs(machine.gamma - 0.0769231) < 1e-6
+  assert type(machine.__repr__()) is str
 
 def test_can_save():
 
@@ -251,6 +252,7 @@ def test_correctness_iris():
   pred_labels, pred_probs = machine.predict_class_and_probabilities(data)
   assert numpy.array_equal(pred_labels, real_labels)
   assert numpy.all(abs(numpy.vstack(pred_probs) - numpy.vstack(real_probs)) < 1e-6)
+  
 
 @nose.tools.raises(RuntimeError)
 def test_correctness_inputsize_exceeds():
