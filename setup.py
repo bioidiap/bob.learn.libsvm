@@ -158,8 +158,8 @@ setup(
 
     name='bob.learn.libsvm',
     version=version,
-    description='Bob\'s Python bindings to LIBSVM',
-    url='http://github.com/bioidiap/bob.learn.libsvm',
+    description='Python bindings to LIBSVM for Bob',
+    url='http://gitlab.idiap.ch/bob/bob.learn.libsvm',
     license='BSD',
     author='Andre Anjos',
     author_email='andre.anjos@idiap.ch',
