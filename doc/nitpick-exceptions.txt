@@ -19,5 +19,8 @@ cpp:type svm_model
 # This is a C type that Sphinx confuses as a C++ type
 cpp:type PyObject
 
+# Not available in Python 3.x
+c:type PyStringObject
+
 # This is not properly documented in Python 2.7, but works in Python 3.x
 py:exc RuntimeError
