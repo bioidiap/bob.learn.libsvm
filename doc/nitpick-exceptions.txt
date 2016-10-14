@@ -1,0 +1,23 @@
+# These are not documented anywhere
+cpp:type size_t
+cpp:type std
+cpp:type std::vector
+cpp:type std::string
+cpp:type boost
+cpp:type boost::shared_ptr
+cpp:type blitz
+cpp:type blitz::Array
+cpp:type bob
+cpp:type bob::learn
+cpp:type bob::learn::libsvm
+cpp:type bob::learn::libsvm::Machine
+cpp:type bob::io
+cpp:type bob::io::base
+cpp:type bob::io::base::HDF5File
+cpp:type svm_model
+
+# This is a C type that Sphinx confuses as a C++ type
+cpp:type PyObject
+
+# This is not properly documented in Python 2.7, but works in Python 3.x
+py:exc RuntimeError

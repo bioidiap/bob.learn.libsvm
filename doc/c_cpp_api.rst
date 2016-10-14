@@ -1,5 +1,4 @@
 .. vim: set fileencoding=utf-8 :
-.. Andre Anjos <andre.dos.anjos@gmail.com>
 .. Tue 15 Oct 14:59:05 2013
 
 =========
@@ -90,7 +89,8 @@ Machine Interface
 
 .. cpp:function:: PyObject* PyBobLearnLibsvmMachine_NewFromMachine(bob::learn::libsvm::Machine* m)
 
-   Builds a new Python object from an existing :cpp:class:`Machine`. The
+   Builds a new Python object from an existing
+   :cpp:class:`bob::learn::libsvm::Machine`. The
    machine object ``m`` is **stolen** from the user, which should not delete it
    anymore.
 
@@ -126,7 +126,7 @@ Other Utilities
 .. cpp:function:: PyObject* PyBobLearnLibsvm_MachineTypeAsString(bob::learn::libsvm::machine_t s)
 
    Returns a Python string representing given a machine type. Returns ``NULL``
-   and sets an :py:class:`RuntimeError` if the enumeration provided is not
+   and sets an :py:exc:`RuntimeError` if the enumeration provided is not
    supported.
 
    This function will return a proper :c:type:`PyStringObject` on Python 2.x
@@ -135,7 +135,7 @@ Other Utilities
 .. cpp:function:: bob::learn::libsvm::machine_t PyBobLearnLibsvm_StringAsMachineType(PyObject* o)
 
    Decodes the machine type enumeration from a pythonic string. Works with any
-   string type or subtype. A :py:class:`RuntimeError` is set if the string
+   string type or subtype. A :py:exc:`RuntimeError` is set if the string
    cannot be encoded as one of the available enumerations. You must check for
    :c:func:`PyErr_Occurred` after a call to this function to make sure that the
    conversion was correctly performed.
@@ -144,7 +144,7 @@ Other Utilities
 
    This function works the same as
    :cpp:func:`PyBobLearnLibsvm_StringAsMachineType`, but accepts a C-style
-   string instead of a Python object as input. A :py:class:`RuntimeError` is
+   string instead of a Python object as input. A :py:exc:`RuntimeError` is
    set if the string cannot be encoded as one of the available enumerations.
    You must check for :c:func:`PyErr_Occurred` after a call to this function to
    make sure that the conversion was correctly performed.
@@ -152,7 +152,7 @@ Other Utilities
 .. cpp:function:: PyObject* PyBobLearnLibsvm_KernelTypeAsString(bob::learn::libsvm::kernel_t s)
 
    Returns a Python string representing given a kernel type. Returns ``NULL``
-   and sets an :py:class:`RuntimeError` if the enumeration provided is not
+   and sets an :py:exc:`RuntimeError` if the enumeration provided is not
    supported.
 
    This function will return a proper :c:type:`PyStringObject` on Python 2.x
@@ -161,7 +161,7 @@ Other Utilities
 .. cpp:function:: bob::learn::libsvm::kernel_t PyBobLearnLibsvm_StringAsKernelType(PyObject* o)
 
    Decodes the kernel type enumeration from a pythonic string. Works with any
-   string type or subtype. A :py:class:`RuntimeError` is set if the string
+   string type or subtype. A :py:exc:`RuntimeError` is set if the string
    cannot be encoded as one of the available enumerations. You must check for
    :c:func:`PyErr_Occurred` after a call to this function to make sure that the
    conversion was correctly performed.
@@ -170,7 +170,7 @@ Other Utilities
 
    This function works the same as
    :cpp:func:`PyBobLearnLibsvm_StringAsKernelType`, but accepts a C-style
-   string instead of a Python object as input. A :py:class:`RuntimeError` is
+   string instead of a Python object as input. A :py:exc:`RuntimeError` is
    set if the string cannot be encoded as one of the available enumerations.
    You must check for :c:func:`PyErr_Occurred` after a call to this function to
    make sure that the conversion was correctly performed.
@@ -277,7 +277,7 @@ objects is described in this section.
       1.0). If you need scaling to be applied, set it individually using the
       appropriate methods bellow.
 
-   .. cpp:function:: Machine(bob::io::HDF5File& config)
+   .. cpp:function:: Machine(bob::io::base::HDF5File& config)
 
       Builds a new Support Vector *Machine* from an HDF5 file
       containing the configuration for this machine. Scaling
@@ -421,7 +421,7 @@ objects is described in this section.
       saved on simpler libsvm model file that does not include the scaling
       parameters set on this machine.
 
-   .. cpp:function:: void save(bob::io::HDF5File& config)
+   .. cpp:function:: void save(bob::io::base::HDF5File& config)
 
       Saves the whole machine into a configuration file. This
       allows for a single instruction parameter loading, which
