@@ -15,12 +15,30 @@ cpp:type bob::io
 cpp:type bob::io::base
 cpp:type bob::io::base::HDF5File
 cpp:type svm_model
+cpp:typeOrConcept size_t
+cpp:typeOrConcept std
+cpp:typeOrConcept std::vector
+cpp:typeOrConcept std::string
+cpp:typeOrConcept boost
+cpp:typeOrConcept boost::shared_ptr
+cpp:typeOrConcept blitz
+cpp:typeOrConcept blitz::Array
+cpp:typeOrConcept bob
+cpp:typeOrConcept bob::learn
+cpp:typeOrConcept bob::learn::libsvm
+cpp:typeOrConcept bob::learn::libsvm::Machine
+cpp:typeOrConcept bob::io
+cpp:typeOrConcept bob::io::base
+cpp:typeOrConcept bob::io::base::HDF5File
+cpp:typeOrConcept svm_model
 
 # This is a C type that Sphinx confuses as a C++ type
 cpp:type PyObject
+cpp:typeOrConcept PyObject
 
 # Not available in Python 3.x
 c:type PyStringObject
+c:typeOrConcept PyStringObject
 
 # This is not properly documented in Python 2.7, but works in Python 3.x
 py:exc RuntimeError
