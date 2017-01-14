@@ -1,17 +1,17 @@
 .. vim: set fileencoding=utf-8 :
 .. Mon 15 Aug 2016 09:46:19 CEST
 
-.. image:: http://img.shields.io/badge/docs-stable-yellow.png
+.. image:: http://img.shields.io/badge/docs-stable-yellow.svg
    :target: http://pythonhosted.org/bob.learn.libsvm/index.html
-.. image:: http://img.shields.io/badge/docs-latest-orange.png
+.. image:: http://img.shields.io/badge/docs-latest-orange.svg
    :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.learn.libsvm/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.learn.libsvm/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.learn.libsvm/commits/master
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.learn.libsvm
-.. image:: http://img.shields.io/pypi/v/bob.learn.libsvm.png
+.. image:: http://img.shields.io/pypi/v/bob.learn.libsvm.svg
    :target: https://pypi.python.org/pypi/bob.learn.libsvm
-.. image:: http://img.shields.io/pypi/dm/bob.learn.libsvm.png
+.. image:: http://img.shields.io/pypi/dm/bob.learn.libsvm.svg
    :target: https://pypi.python.org/pypi/bob.learn.libsvm
 
 
@@ -42,5 +42,5 @@ development `mailing list`_.
 
 .. Place your references here:
 .. _bob: https://www.idiap.ch/software/bob
-.. _installation: https://gitlab.idiap.ch/bob/bob/wikis/Installation
+.. _installation: https://www.idiap.ch/software/bob/install
 .. _mailing list: https://groups.google.com/forum/?fromgroups#!forum/bob-devel
