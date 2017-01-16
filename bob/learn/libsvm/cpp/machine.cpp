@@ -156,7 +156,7 @@ bob::learn::libsvm::Machine::Machine(bob::io::base::HDF5File& config):
   config.getAttribute(".", "version", version);
   if ( (LIBSVM_VERSION/100) > (version/100) ) {
     //if the major version changes... be aware!
-    boost::format m("SVM being loaded from `%s:%s' (created with libsvm-%d) with libsvm-%d. You may want to read the libsvm FAQ at http://www.csie.ntu.edu.tw/~cjlin/libsvm/log to check if there were format changes between these versions. If not, you can safely ignore this warning and even tell us to remove it via our bug tracker: https://github.com/idiap/bob/issues");
+    boost::format m("SVM being loaded from `%s:%s' (created with libsvm-%d) with libsvm-%d. You may want to read the libsvm FAQ at http://www.csie.ntu.edu.tw/~cjlin/libsvm/log to check if there were format changes between these versions. If not, you can safely ignore this warning and even tell us to remove it via our bug tracker: https://www.idiap.ch/software/bob/issues");
     m % config.filename() % config.cwd() % version % LIBSVM_VERSION;
     bob::core::warn << m.str() << std::endl;
   }
