@@ -601,18 +601,14 @@ static PyObject* PyBobLearnLibsvmTrainer_train
   auto subtract_ = make_xsafe(subtract);
   auto divide_ = make_xsafe(divide);
 
-  /**
-  // Note: strangely, if you pass dict.values(), this check does not work
-  if (!PyIter_Check(X)) {
-    PyErr_Format(PyExc_TypeError, "`%s' requires an iterable for parameter `X', but you passed `%s' which does not implement the iterator protocol", Py_TYPE(self)->tp_name, Py_TYPE(X)->tp_name);
-    return 0;
-  }
-  **/
-
   /* Checks and converts all entries */
   std::vector<blitz::Array<double,2> > Xseq;
   std::vector<boost::shared_ptr<PyBlitzArrayObject>> Xseq_;
 
+  /* The standard way to check if a python object is iterable is this.
+   * PyIter_Check will only check if the object is of class ``iterable``. This
+   * will not work as you expect
+   */
   PyObject* iterator = PyObject_GetIter(X);
   if (!iterator) return 0;
   auto iterator_ = make_safe(iterator);
