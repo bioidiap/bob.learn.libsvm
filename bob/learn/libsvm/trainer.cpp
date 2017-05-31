@@ -676,15 +676,8 @@ static PyObject* PyBobLearnLibsvmTrainer_train
   try {
     bob::learn::libsvm::Machine* machine;
 
-    if(self->cxx->getMachineType()==bob::learn::libsvm::machine_t::ONE_CLASS)
-    {
-       if (subtract && divide) machine = self->cxx->train(Xseq,*PyBlitzArrayCxx_AsBlitz<double,1>(subtract),*PyBlitzArrayCxx_AsBlitz<double,1>(divide));
-       else  machine = self->cxx->train(Xseq);
-    }
-    else {
-      if (subtract && divide) machine = self->cxx->train(Xseq,*PyBlitzArrayCxx_AsBlitz<double,1>(subtract),*PyBlitzArrayCxx_AsBlitz<double,1>(divide));
-      else machine = self->cxx->train(Xseq);
-    }
+    if (subtract && divide) machine = self->cxx->train(Xseq,*PyBlitzArrayCxx_AsBlitz<double,1>(subtract),*PyBlitzArrayCxx_AsBlitz<double,1>(divide));
+    else  machine = self->cxx->train(Xseq);
 
     // Note: This is not a solution. I just want to see if it will work in all CI's
     PyObject* iterator2 = PyObject_GetIter(X);
