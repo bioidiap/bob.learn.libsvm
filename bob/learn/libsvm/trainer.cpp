@@ -596,8 +596,8 @@ static PyObject* PyBobLearnLibsvmTrainer_train
         &PyBlitzArray_OutputConverter, &divide
         )) return 0;
 
+  // do not decref X, otherwise it will be deleted by Python
   //protects acquired resources through this scope
-  auto X_ = make_safe(X);
   auto subtract_ = make_xsafe(subtract);
   auto divide_ = make_xsafe(divide);
 
@@ -676,7 +676,7 @@ static PyObject* PyBobLearnLibsvmTrainer_train
     else  machine = self->cxx->train(Xseq);
 
     // Note: This is not a solution. I just want to see if it will work in all CI's
-    PyObject* iterator2 = PyObject_GetIter(X);
+    //PyObject* iterator2 = PyObject_GetIter(X);
 
     return PyBobLearnLibsvmMachine_NewFromMachine(machine);
   }
