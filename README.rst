@@ -2,9 +2,9 @@
 .. Mon 15 Aug 2016 09:46:19 CEST
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: http://pythonhosted.org/bob.learn.libsvm/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.learn.libsvm/stable/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.svg
-   :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.learn.libsvm/master/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.learn.libsvm/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.learn.libsvm/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.learn.libsvm/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.learn.libsvm/badges/master/coverage.svg
@@ -12,8 +12,6 @@
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.learn.libsvm
 .. image:: http://img.shields.io/pypi/v/bob.learn.libsvm.svg
-   :target: https://pypi.python.org/pypi/bob.learn.libsvm
-.. image:: http://img.shields.io/pypi/dm/bob.learn.libsvm.svg
    :target: https://pypi.python.org/pypi/bob.learn.libsvm
 
 
@@ -28,7 +26,7 @@ Bob_. It contains a set of Pythonic bindings for LIBSVM.
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.learn.libsvm
