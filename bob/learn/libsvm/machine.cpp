@@ -69,22 +69,14 @@ static int PyBobLearnLibsvmMachine_init_svmfile
   static const char* const_kwlist[] = {"filename", 0};
   static char** kwlist = const_cast<char**>(const_kwlist);
 
-  PyObject* filename = 0;
+  const char* filename = 0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&", kwlist,
         &PyBobIo_FilenameConverter, &filename))
     return -1;
 
-  auto filename_ = make_safe(filename);
-
-#if PY_VERSION_HEX >= 0x03000000
-  const char* c_filename = PyBytes_AS_STRING(filename);
-#else
-  const char* c_filename = PyString_AS_STRING(filename);
-#endif
-
   try {
-    self->cxx = new bob::learn::libsvm::Machine(c_filename);
+    self->cxx = new bob::learn::libsvm::Machine(filename);
   }
   catch (std::exception& ex) {
     PyErr_SetString(PyExc_RuntimeError, ex.what());
@@ -985,31 +977,22 @@ static PyObject* PyBobLearnLibsvmMachine_Save
   }
 
   // try a filename conversion and use libsvm's original file format
-  PyObject* filename = 0;
+  const char* filename = 0;
   int ok = PyBobIo_FilenameConverter(f, &filename);
   if (!ok) {
     PyErr_Format(PyExc_TypeError, "cannot convert `%s' into a valid string for a file path - objects of type `%s' can only save to HDF5 files or text files using LIBSVM's original file format (pass a string referring to a valid filesystem path in this case)", Py_TYPE(f)->tp_name, Py_TYPE(self)->tp_name);
     return 0;
   }
 
-  // at this point we know we have a valid file system string
-  auto filename_ = make_safe(filename);
-
-#if PY_VERSION_HEX >= 0x03000000
-  const char* c_filename = PyBytes_AS_STRING(filename);
-#else
-  const char* c_filename = PyString_AS_STRING(filename);
-#endif
-
   try {
-    self->cxx->save(c_filename);
+    self->cxx->save(filename);
   }
   catch (std::exception& ex) {
     PyErr_SetString(PyExc_RuntimeError, ex.what());
     return 0;
   }
   catch (...) {
-    PyErr_Format(PyExc_RuntimeError, "`%s' cannot write data to file `%s' (using LIBSVM's original text format): unknown exception caught", Py_TYPE(self)->tp_name, c_filename);
+    PyErr_Format(PyExc_RuntimeError, "`%s' cannot write data to file `%s' (using LIBSVM's original text format): unknown exception caught", Py_TYPE(self)->tp_name, filename);
     return 0;
   }
 
