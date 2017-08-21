@@ -56,22 +56,14 @@ static int PyBobLearnLibsvmFile_init
   static const char* const_kwlist[] = {"path", 0};
   static char** kwlist = const_cast<char**>(const_kwlist);
 
-  PyObject* filename = 0;
+  const char* filename = 0;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&", kwlist,
         &PyBobIo_FilenameConverter, &filename))
     return -1;
 
-  auto filename_ = make_safe(filename);
-
-#if PY_VERSION_HEX >= 0x03000000
-  const char* c_filename = PyBytes_AS_STRING(filename);
-#else
-  const char* c_filename = PyString_AS_STRING(filename);
-#endif
-
   try {
-    self->cxx = new bob::learn::libsvm::File(c_filename);
+    self->cxx = new bob::learn::libsvm::File(filename);
   }
   catch (std::exception& ex) {
     PyErr_SetString(PyExc_RuntimeError, ex.what());
@@ -488,10 +480,10 @@ static PyObject* PyBobLearnLibsvmFile_read_all
     auto bzval = PyBlitzArrayCxx_AsBlitz<double,2>(values);
     blitz::Range all = blitz::Range::all();
     int k = 0;
-    
+
     while ((self->cxx->good()) && ((size_t)k < self->cxx->samples())) {
       blitz::Array<double,1> v_ = (*bzval)(k, all);
-      
+
       int label = 0;
       bool ok = self->cxx->read_(label, v_);
       if (ok) (*bzlab)(k) = label;
