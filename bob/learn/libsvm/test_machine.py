@@ -101,10 +101,10 @@ def test_can_save():
 
   os.unlink(tmp)
 
-def test_can_save_hdf5():
+def run_for_extension(ext):
 
   machine = Machine(HEART_MACHINE)
-  tmp = tempname('.hdf5')
+  tmp = tempname(ext)
   machine.save(bob.io.base.HDF5File(tmp, 'w'))
   del machine
 
@@ -122,6 +122,15 @@ def test_can_save_hdf5():
   assert numpy.all(abs(machine.input_divide - 1) < 1e-10)
 
   os.unlink(tmp)
+
+def test_can_save_arbitrary():
+  run_for_extension('.arbitrary')
+
+def test_can_save_h5():
+  run_for_extension('.h5')
+
+def test_can_save_hdf5():
+  run_for_extension('.hdf5')
 
 def test_data_loading():
 
