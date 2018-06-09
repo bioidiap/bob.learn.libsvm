@@ -54,23 +54,12 @@ class libsvm:
 
   """
 
-  def __init__ (self, requirement='', only_static=False):
+  def __init__ (self):
     """
-    Searches for libsvm in stock locations. Allows user to override.
+    Searches for libsvm in stock locations.
 
     If the user sets the environment variable BOB_PREFIX_PATH, that prefixes
     the standard path locations.
-
-    Parameters:
-
-    requirement, str
-      A string, indicating a version requirement for libsvm. For example,
-      ``'>= 3.12'``.
-
-    only_static, boolean
-      A flag, that indicates if we intend to link against the static library
-      only. This will trigger our library search to disconsider shared
-      libraries when searching.
     """
 
     candidates = find_header('svm.h', subpaths=['', 'libsvm', 'libsvm-*/libsvm'])
@@ -78,34 +67,8 @@ class libsvm:
     if not candidates:
       raise RuntimeError("could not find libsvm's `svm.h' - have you installed libsvm on this machine?")
 
-    found = False
-
-    if not requirement:
-      self.include_directory = os.path.dirname(candidates[0])
-      self.version = libsvm_version(candidates[0])
-      found = True
-
-    else:
-
-      # requirement is 'operator' 'version'
-      operator, required = [k.strip() for k in requirement.split(' ', 1)]
-
-      # now check for user requirements
-      for candidate in candidates:
-        vv = libsvm_version(candidate)
-        available = LooseVersion(vv)
-        if (operator == '<' and available < required) or \
-           (operator == '<=' and available <= required) or \
-           (operator == '>' and available > required) or \
-           (operator == '>=' and available >= required) or \
-           (operator == '==' and available == required):
-          self.include_directory = os.path.dirname(candidate)
-          self.version = vv
-          found = True
-          break
-
-    if not found:
-      raise RuntimeError("could not find the required (%s) version of libsvm on the file system (looked at: %s)" % (requirement, ', '.join(candidates)))
+    self.include_directory = os.path.dirname(candidates[0])
+    self.version = libsvm_version(candidates[0])
 
     # normalize
     self.include_directory = os.path.normpath(self.include_directory)
@@ -114,7 +77,7 @@ class libsvm:
     prefix = os.path.dirname(os.path.dirname(self.include_directory))
     module = 'svm'
     candidates = find_library(module, version=self.version,
-            prefixes=[prefix], only_static=only_static)
+            prefixes=[prefix], only_static=False)
 
     if not candidates:
       raise RuntimeError("cannot find required libsvm binary module `%s' - make sure libsvm is installed on `%s'" % (module, prefix))
@@ -143,10 +106,10 @@ class libsvm:
        >>> from bob.learn.libsvm import libsvm
        >>> pkg = libsvm()
        >>> pkg.macros()
-       [('HAVE_LIBSVM', '1'), ('LIBSVM_VERSION', '"..."')]
+       [('HAVE_LIBSVM', '1')]
 
     """
-    return [('HAVE_LIBSVM', '1'), ('LIBSVM_VERSION', '"%s"' % self.version)]
+    return [('HAVE_LIBSVM', '1')]
 
 pkg = libsvm()
 system_include_dirs = [pkg.include_directory]
