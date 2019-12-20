@@ -217,7 +217,7 @@ def test_training_one_class():
 
   curr_scores = numpy.array(curr_scores)
   prev_scores = numpy.array(prev_scores)
-  _check_abs_diff(curr_scores, prev_scores, 5e-7)
+  _check_abs_diff(curr_scores, prev_scores, 5e-5)
 
 def test_successive_training():
 
