@@ -135,7 +135,7 @@ def test_training():
 
   curr_scores = numpy.array(curr_scores)
   prev_scores = numpy.array(prev_scores)
-  _check_abs_diff(curr_scores, prev_scores, 1e-8)
+  _check_abs_diff(curr_scores, prev_scores, 5e-7)
 
 def test_training_with_probability():
 
@@ -171,7 +171,7 @@ def test_training_with_probability():
 
   curr_scores = numpy.array(curr_scores)
   prev_scores = numpy.array(prev_scores)
-  _check_abs_diff(curr_scores, prev_scores, 1e-8)
+  _check_abs_diff(curr_scores, prev_scores, 5e-7)
 
   # check probabilities -- probA and probB do not get the exact same values
   # as when using libsvm's svm-train.c. The reason may lie in the order in
@@ -217,7 +217,7 @@ def test_training_one_class():
 
   curr_scores = numpy.array(curr_scores)
   prev_scores = numpy.array(prev_scores)
-  _check_abs_diff(curr_scores, prev_scores)
+  _check_abs_diff(curr_scores, prev_scores, 5e-7)
 
 def test_successive_training():
 
